@@ -78,7 +78,7 @@
         },
         mounted() {
             const user = getAuthUser();
-            if(user.type !== 2) {
+            if(user.type != 2) {
                 this.$router.push({
                     name: 'privateProfile'
                 });

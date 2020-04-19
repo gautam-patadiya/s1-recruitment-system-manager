@@ -312,7 +312,10 @@ function routes() {
 
 const router = new Router({
     mode: 'history',
-    routes: routes()
+    routes: routes(),
+    scrollBehavior() {
+        return {x: 0, y: 0}
+    },
 });
 
 router.beforeEach((to, from, next) => {
@@ -328,7 +331,7 @@ router.beforeEach((to, from, next) => {
             //     redirect: to.fullPath,
             // },
         });
-    } else if(to.matched.some(record => record.meta.requiresAdmin) && hasAuthUser() && user.type !== 1) {
+    } else if(to.matched.some(record => record.meta.requiresAdmin) && hasAuthUser() && user.type != 1) {
         next({
             name: 'landing'
         });

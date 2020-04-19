@@ -79,7 +79,7 @@
 
             if(hasAuthUser()) {
                 const user = getAuthUser();
-                if(user.type === 1) {
+                if(user.type == 1) {
                     return this.$router.push({name: 'home'});
                 }
 
