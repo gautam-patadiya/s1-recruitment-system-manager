@@ -8,7 +8,9 @@ A Recruitment system manager is a script built for the HR and Consulting compani
 http://s1rsm.demosea.in/
 
 Email: admin@admin.com
+
 Password: password
+
 Admin can be access through the [http://s1rsm.demosea.in/home](http://s1rsm.demosea.in/home)
 
 ## License
