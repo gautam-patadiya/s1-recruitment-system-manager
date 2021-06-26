@@ -3,7 +3,7 @@ var webpack = require('webpack');
 module.exports = {
     // proxy API requests to Valet during development
     devServer: {
-        proxy: 'http://localhost:8002'
+        proxy: 'http://localhost:8000'
     },
 
     // output built static files to Laravel's public dir.
