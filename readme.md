@@ -9,7 +9,7 @@ http://s1-rsm.demosea.in/
 
 Email: admin@admin.com
 
-Password: password
+Password: admin
 
 Admin can be access through the [http://s1-rsm.demosea.in/home](http://s1-rsm.demosea.in/home)
 
