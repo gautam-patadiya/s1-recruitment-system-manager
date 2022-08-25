@@ -16,3 +16,5 @@ Admin can be access through the [http://s1-rsm.demosea.in/home](http://s1-rsm.de
 ## License
 
 The script is open-source licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+[Contact me](https://www.linkedin.com/in/gautampatadiya/) for query
