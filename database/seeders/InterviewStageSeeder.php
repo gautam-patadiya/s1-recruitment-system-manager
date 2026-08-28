@@ -1,23 +1,19 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Domain\Models\InterviewStage;
-use App\Domain\Models\JobDepartment;
 use Illuminate\Database\Seeder;
 
 class InterviewStageSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
         InterviewStage::truncate();
 
         InterviewStage::create([
             'title' => 'Telephonic',
-            'i_order' => 1
+            'i_order' => 1,
         ]);
 
         InterviewStage::create([
@@ -27,7 +23,7 @@ class InterviewStageSeeder extends Seeder
 
         InterviewStage::create([
             'title' => 'HR',
-            'i_order' => 3
+            'i_order' => 3,
         ]);
     }
 }

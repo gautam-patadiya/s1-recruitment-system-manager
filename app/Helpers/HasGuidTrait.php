@@ -2,14 +2,16 @@
 
 namespace App\Helpers;
 
+use Illuminate\Support\Str;
+
 trait HasGuidTrait
 {
-    protected static function boot()
+    protected static function bootHasGuidTrait()
     {
-        parent::boot();
-
         static::creating(function ($event) {
-            $event->guid = guid();
+            if (!$event->guid) {
+                $event->guid = (string) Str::uuid();
+            }
         });
     }
 

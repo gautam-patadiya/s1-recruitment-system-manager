@@ -1,33 +1,28 @@
 <?php
 
+namespace Database\Seeders;
+
 use App\Domain\Models\User;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Seeder;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
+    public function run(): void
     {
-        $i = 1;
         User::truncate();
 
-        factory(User::class)->create([
+        UserFactory::new()->create([
             'email' => 'admin@admin.com',
             'gender' => 1,
-            'type' => 1
+            'type' => 1,
         ]);
 
-        do {
-            factory(User::class)->create([
+        for ($i = 1; $i <= 15; $i++) {
+            UserFactory::new()->create([
                 'gender' => ($i < 5) ? 1 : 2,
                 'type' => ($i < 5) ? 1 : 2,
             ]);
-
-            $i++;
-        } while($i <= 15);
+        }
     }
 }

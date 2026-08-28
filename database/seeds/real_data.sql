@@ -275,11 +275,7 @@ CREATE TABLE `migrations` (
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (15,	'2014_10_12_000000_create_users_table',	1),
-(17,	'2016_06_01_000001_create_oauth_auth_codes_table',	1),
-(18,	'2016_06_01_000002_create_oauth_access_tokens_table',	1),
-(19,	'2016_06_01_000003_create_oauth_refresh_tokens_table',	1),
-(20,	'2016_06_01_000004_create_oauth_clients_table',	1),
-(21,	'2016_06_01_000005_create_oauth_personal_access_clients_table',	1),
+(17,	'2019_12_14_000001_create_personal_access_tokens_table',	1),
 (22,	'2014_10_12_100000_create_password_resets_table',	2),
 (23,	'2020_03_02_135115_create_verify_users_table',	2),
 (25,	'2020_03_05_113736_create_table_experience_levels_05_03_01',	3),
@@ -291,90 +287,25 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (41,	'2020_03_13_073723_create_table_job_applications_13_03_01',	9),
 (42,	'2020_03_16_094237_create_table_interview_16_03_01',	9),
 (43,	'2020_03_17_094237_create_table_document_type_17_03_01',	10),
-(45,	'2020_03_17_103412_create_table_user_documents_17_03_01',	11);
+(45,	'2020_03_17_103412_create_table_user_documents_17_03_01',	11),
+(46,	'2026_08_28_000001_drop_passport_oauth_tables',	12);
 
-DROP TABLE IF EXISTS `oauth_access_tokens`;
-CREATE TABLE `oauth_access_tokens` (
-  `id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
-  `client_id` int(10) unsigned NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `scopes` text COLLATE utf8mb4_unicode_ci,
-  `revoked` tinyint(1) NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `expires_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `oauth_access_tokens_user_id_index` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `oauth_access_tokens` (`id`, `user_id`, `client_id`, `name`, `scopes`, `revoked`, `created_at`, `updated_at`, `expires_at`) VALUES
-('05df2bff7619243d49aef2d59663491b09f142b39fff1e4025681d81a4d8f7ebc07bf2a447a475ed',	10,	1,	'rileyfarrellUDz@teleosaurs.xyz',	'[]',	0,	'2020-03-31 04:06:32',	'2020-03-31 04:06:32',	'2020-04-02 09:36:32'),
-('2b18c59a3264f7e32c5531f10c7c053a81d9380d7dd95df9345facec60cf9a3178f6c3db67aca822',	2,	1,	'admin@admin.com',	'[]',	0,	'2020-03-28 00:01:08',	'2020-03-28 00:01:08',	'2020-03-30 05:31:07'),
-('3dc405c5889193c785c69ad6fbd01264e9c274a5cd7831fc057e2132be34c46e09008663a7705c41',	2,	1,	'admin@admin.com',	'[]',	0,	'2020-03-27 01:51:19',	'2020-03-27 01:51:19',	'2020-03-29 07:21:19'),
-('50e20f74d6bef07f37eb1a2fb065b33cfb8da2f805cdfc038a2800cbe5be49748c9f9b00d7999845',	2,	1,	'admin@admin.com',	'[]',	0,	'2020-03-29 08:01:19',	'2020-03-29 08:01:19',	'2020-03-31 13:31:19'),
-('527be37cde51ff6bde21198d6a0272568c0eb0460a70993e2623e77cbe31fa5310ee333335fc5735',	2,	1,	'admin@admin.com',	'[]',	0,	'2020-03-29 08:19:59',	'2020-03-29 08:19:59',	'2020-03-31 13:49:59'),
-('867dba17971958e6161cf737f9782f5b48c758950de8e42452b7bb36ed41570e432711281932a34d',	2,	1,	'admin@admin.com',	'[]',	0,	'2020-03-29 08:20:00',	'2020-03-29 08:20:00',	'2020-03-31 13:49:59'),
-('b5a8dfc0f15e143e99a0f7bc02a5f161ecc528764e2e97698bc001e4c9d1c213b568da3e16f5d528',	1,	1,	'avamccarthyK5Q@teleosaurs.xyz',	'[]',	0,	'2020-03-27 01:46:36',	'2020-03-27 01:46:36',	'2020-03-29 07:16:36'),
-('baf3d97a19da75b438beecc0aed5c666950fadf29d801a756db80ec85bfa7b2a14fceaa9e1e6a6f8',	10,	1,	'rileyfarrellUDz@teleosaurs.xyz',	'[]',	0,	'2020-03-31 04:03:22',	'2020-03-31 04:03:22',	'2020-04-02 09:33:21'),
-('d99222adecac0c3b48180ef638cebde3c45bd045bd62be40d155db8f91b643ba732254b78049ee67',	2,	1,	'admin@admin.com',	'[]',	0,	'2020-03-28 04:25:49',	'2020-03-28 04:25:49',	'2020-03-30 09:55:49'),
-('ef0f9aa497db340528677150c8eb34fc8b675ac737ae38d7bfc82895c4205aa9ddb277ea54f686b5',	2,	1,	'admin@admin.com',	'[]',	0,	'2020-03-31 04:08:26',	'2020-03-31 04:08:26',	'2020-04-02 09:38:26'),
-('f11b0a276a8a6c45049a0640a49ad8382df49ec5f1bfb4d4f90de15e71dba692dd0b28c68347990d',	1,	1,	'avamccarthyK5Q@teleosaurs.xyz',	'[]',	0,	'2020-03-27 01:52:56',	'2020-03-27 01:52:56',	'2020-03-29 07:22:56'),
-('fd26c9862f0367277a839d4e852268f7122811d3e6ccdd123b75d12e093ec616e18fc75848c7cb28',	2,	1,	'admin@admin.com',	'[]',	0,	'2020-03-27 01:51:39',	'2020-03-27 01:51:39',	'2020-03-29 07:21:39');
-
-DROP TABLE IF EXISTS `oauth_auth_codes`;
-CREATE TABLE `oauth_auth_codes` (
-  `id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_id` bigint(20) NOT NULL,
-  `client_id` int(10) unsigned NOT NULL,
-  `scopes` text COLLATE utf8mb4_unicode_ci,
-  `revoked` tinyint(1) NOT NULL,
-  `expires_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-DROP TABLE IF EXISTS `oauth_clients`;
-CREATE TABLE `oauth_clients` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) DEFAULT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `secret` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `redirect` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `personal_access_client` tinyint(1) NOT NULL,
-  `password_client` tinyint(1) NOT NULL,
-  `revoked` tinyint(1) NOT NULL,
+DROP TABLE IF EXISTS `personal_access_tokens`;
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_id` bigint(20) unsigned NOT NULL,
+  `name` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `expires_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `oauth_clients_user_id_index` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `oauth_clients` (`id`, `user_id`, `name`, `secret`, `redirect`, `personal_access_client`, `password_client`, `revoked`, `created_at`, `updated_at`) VALUES
-(1,	NULL,	'Laravel Personal Access Client',	'8IA8pU2r56OQBoA8xhrWM8vhgafRkNx2jtUuXPu6',	'http://localhost',	1,	0,	0,	'2020-03-27 01:46:33',	'2020-03-27 01:46:33'),
-(2,	NULL,	'Laravel Password Grant Client',	'SV9y1OzGsZwJs5eEvyma2YgefwIwoczLXrWuxR2X',	'http://localhost',	0,	1,	0,	'2020-03-27 01:46:33',	'2020-03-27 01:46:33');
-
-DROP TABLE IF EXISTS `oauth_personal_access_clients`;
-CREATE TABLE `oauth_personal_access_clients` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `client_id` int(10) unsigned NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `oauth_personal_access_clients_client_id_index` (`client_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO `oauth_personal_access_clients` (`id`, `client_id`, `created_at`, `updated_at`) VALUES
-(1,	1,	'2020-03-27 01:46:33',	'2020-03-27 01:46:33');
-
-DROP TABLE IF EXISTS `oauth_refresh_tokens`;
-CREATE TABLE `oauth_refresh_tokens` (
-  `id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `access_token_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `revoked` tinyint(1) NOT NULL,
-  `expires_at` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `oauth_refresh_tokens_access_token_id_index` (`access_token_id`)
+  UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`),
+  KEY `personal_access_tokens_expires_at_index` (`expires_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 

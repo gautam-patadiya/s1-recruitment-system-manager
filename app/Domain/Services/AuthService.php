@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Laravel\Passport\Passport;
 
 class AuthService
 {
@@ -24,15 +23,14 @@ class AuthService
             ->first();
 
         if ($user && Hash::check($inputs['password'], $user->password)) {
-
-            if (array_key_exists('remember_me', $inputs) && $inputs['remember_me']) {
-                Passport::refreshTokensExpireIn(now()->addDay(30));
-            }
-
             $user->last_login_at = now();
             $user->save();
 
-            $tokenResult = $user->createToken($user->email);
+            $expiresAt = (array_key_exists('remember_me', $inputs) && $inputs['remember_me'])
+                ? now()->addDays(30)
+                : now()->addDays(2);
+
+            $tokenResult = $user->createToken($user->email, ['*'], $expiresAt);
             $user->tokenResult = $tokenResult;
 
             return $user;

@@ -25,10 +25,10 @@ class AuthResource extends CrudResource
             'last_login_at' => $this->last_login_at,
             $this->mergeWhen($this->tokenResult, function () {
                 return [
-                    'access_token' => $this->tokenResult->accessToken,
+                    'access_token' => $this->tokenResult->plainTextToken,
                     'token_type' => 'Bearer',
                     'expires_at' => Carbon::parse(
-                        $this->tokenResult->token->expires_at
+                        $this->tokenResult->accessToken->expires_at
                     )->toDateTimeString(),
                 ];
             })

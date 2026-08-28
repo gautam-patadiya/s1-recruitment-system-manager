@@ -1,9 +1,15 @@
 var webpack = require('webpack');
 
+const apiUrl = process.env.VUE_APP_API_URL || 'http://localhost:8000';
+const devServerHost = process.env.VUE_APP_DEV_SERVER_HOST || 'localhost';
+const devServerPort = process.env.VUE_APP_DEV_SERVER_PORT || 8080;
+
 module.exports = {
     // proxy API requests to Valet during development
     devServer: {
-        proxy: 'http://localhost:8000'
+        host: devServerHost,
+        port: devServerPort,
+        proxy: apiUrl
     },
 
     // output built static files to Laravel's public dir.

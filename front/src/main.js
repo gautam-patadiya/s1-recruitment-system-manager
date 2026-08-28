@@ -27,13 +27,14 @@ axios
     .then((response) => {
         const {data} = response;
         const storeInstance = store(data);
+        const apiUrl = process.env.VUE_APP_API_URL || data.app_url;
 
         new Vue({
             store: storeInstance,
             render: h => h(App),
             router,
             created() {
-                handleSyncRequestLoader(storeInstance, data.app_url);
+                handleSyncRequestLoader(storeInstance, apiUrl);
             }
         }).$mount('#app');
     })

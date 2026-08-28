@@ -45,7 +45,7 @@ class DocumentService extends BaseService
         $upload->path = $path;
         $upload->filename = $file->getClientOriginalName();
         $upload->mimetype = $file->getMimeType();
-        $upload->size = $file->getClientSize();
+        $upload->size = $file->getSize();
         $upload->header = $file->getClientMimeType();
         $upload->save();
 

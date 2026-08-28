@@ -2,7 +2,7 @@
 
 S1 Recruitment System Manager is an applicant tracking system built for HR and consulting companies. It manages job postings for multiple companies, candidate registrations, job applications, document uploads, and interviews with configurable stages and statuses.
 
-The application is a Laravel API with a Vue single-page frontend, so users can move through the system without full page refreshes.
+The application is a Laravel 11 API with a Vue single-page frontend, so users can move through the system without full page refreshes.
 
 ## Features
 
@@ -13,11 +13,11 @@ The application is a Laravel API with a Vue single-page frontend, so users can m
 - Multi-stage interview management
 - Advanced filters
 - CSV and PDF export
-- Secure authentication with Laravel Passport
+- Secure bearer-token authentication with Laravel Sanctum
 
 ## Requirements
 
-- PHP 7.2.5 or higher
+- PHP 8.2 or higher
 - Composer
 - MySQL
 - Node.js and npm
@@ -56,12 +56,6 @@ Run the database migrations and seeders:
 
 ```bash
 php artisan migrate --seed
-```
-
-Install Laravel Passport keys and clients:
-
-```bash
-php artisan passport:install
 ```
 
 Create the storage symlink and make Laravel writable directories accessible:
