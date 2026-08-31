@@ -34,6 +34,7 @@ Route::prefix('auth')->group(function () {
 Route::get('dashboard/infoboxes', [DashboardController::class, 'getInfoBoxes']);
 Route::get('dashboard/today/expires/jobs', [DashboardController::class, 'getTodayExpiresJobs']);
 Route::get('dashboard/latest/job/applications', [DashboardController::class, 'getLatestJobApplication']);
+Route::get('dashboard/today/job/applications/count', [DashboardController::class, 'getTodayJobApplicationsCount']);
 Route::get('dashboard/company/job/revenue', [DashboardController::class, 'getCompanyJobRevenue']);
 Route::get('dashboard/job/application/monthly/revenue', [DashboardController::class, 'getJobApplicationMonthlyRevenue']);
 

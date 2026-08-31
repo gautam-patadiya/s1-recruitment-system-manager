@@ -44,6 +44,15 @@ class DashboardController extends CrudController
         return JobApplicationResource::collection($this->service->getLatestJobApplication($request->all()));
     }
 
+    public function getTodayJobApplicationsCount(Request $request)
+    {
+        return response()->json([
+            'data' => [
+                'total' => $this->service->getTodayJobApplicationsCount($request->all())
+            ]
+        ]);
+    }
+
     public function getCompanyJobRevenue(Request $request)
     {
         return response()->json([

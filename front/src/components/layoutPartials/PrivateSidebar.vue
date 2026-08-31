@@ -31,20 +31,27 @@
 
         <div class="sidebar-summary-card">
             <span>Today</span>
-            <strong>12</strong>
-            <p>Applications need review</p>
+            <b-skeleton v-if="todayApplications.loading" width="52px" height="32px"></b-skeleton>
+            <strong v-if="!todayApplications.loading">{{todayApplications.total}}</strong>
+            <p>Job applications arrived today</p>
         </div>
     </aside>
 </template>
 
 <script>
     import {mapFields} from "vuex-map-fields";
+    import moment from "moment-timezone";
+    import {request} from "../../util/request";
 
     export default {
         data() {
             return {
                 textLogoPartOne: '',
                 textLogoPartTwo: '',
+                todayApplications: {
+                    loading: false,
+                    total: 0,
+                },
                 menuGroups: [
                     {
                         title: 'Workspace',
@@ -86,6 +93,29 @@
         mounted() {
             this.textLogoPartOne = this.settings.text_logo_part_one;
             this.textLogoPartTwo = this.settings.text_logo_part_two;
+            this.getTodayJobApplicationsCount();
+        },
+        methods: {
+            getTodayJobApplicationsCount() {
+                this.todayApplications.loading = true;
+
+                request({
+                    method: "get",
+                    url: `/dashboard/today/job/applications/count`,
+                    params: {
+                        today: moment().tz(moment.tz.guess()).utc().format('YYYY-MM-DD'),
+                    },
+                })
+                .then((response) => {
+                    this.todayApplications.total = (response.data && response.data.total) ? response.data.total : 0;
+                })
+                .catch(() => {
+                    this.todayApplications.total = 0;
+                })
+                .finally(() => {
+                    this.todayApplications.loading = false;
+                });
+            },
         },
         computed: {
             ...mapFields([

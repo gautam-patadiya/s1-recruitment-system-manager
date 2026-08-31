@@ -86,6 +86,15 @@ class DashboardService extends BaseService
         return $entities->paginate(8);
     }
 
+    public function getTodayJobApplicationsCount(array $input)
+    {
+        $today = $input['today'] ?? now()->toDateString();
+
+        return JobApplication::query()
+            ->whereDate('created_at', '=', $today)
+            ->count();
+    }
+
     public function getCompanyJobRevenue(array $input)
     {
         $entities = Company::query()->
