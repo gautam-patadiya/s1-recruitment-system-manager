@@ -11,9 +11,10 @@
     "build": "rm -rf ../public/{js,css,img} && vue-cli-service build --no-clean"
   },
   "dependencies": {
-    "ant-design-vue": "^1.4.11",
     "axios": "^0.19.2",
-    "babel-plugin-import": "^1.13.0",
+    "bootstrap": "^4.6.2",
+    "bootstrap-icons": "^1.11.3",
+    "bootstrap-vue": "^2.23.1",
     "core-js": "^3.39.0",
     "export-to-csv": "^0.2.1",
     "fs": "0.0.1-security",
@@ -31,6 +32,8 @@
     "vue-progressbar": "^0.7.5",
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.0.3",
+    "vue-select": "^3.20.4",
+    "vue2-datepicker": "^3.11.1",
     "vuex": "^3.0.1",
     "vuex-map-fields": "^1.4.0"
   },

@@ -1,146 +1,163 @@
 <template>
     <div>
-        <a-row :gutter="16" class="mb-15">
-            <a-col>
-                <h2 class="mb-0">
-                    Jobs <strong>Overview</strong>
+        <b-row class="align-items-center job-header-simple">
+            <b-col cols="12" md="6">
+                <h2 class="job-header-title">
+                    Jobs Overview
                 </h2>
-            </a-col>
-        </a-row>
-        <a-card title="Filters">
+            </b-col>
+
+            <b-col cols="12" md="6" class="text-md-right mt-15 mt-md-0">
+                <b-button variant="outline-secondary" class="mr-10" @click="handleCsvExportClick">
+                    <i class="bi bi-filetype-csv mr-5"></i>
+                    Export CSV
+                </b-button>
+                <b-button variant="outline-secondary" @click="handlePdfExportClick">
+                    <i class="bi bi-file-earmark-pdf mr-5"></i>
+                    Export PDF
+                </b-button>
+            </b-col>
+        </b-row>
+
+        <b-card class="report-filter-card mb-20">
+            <h5 class="report-filter-title">Filters</h5>
             <form @submit.prevent="loadList" autocomplete="off">
-                <a-row>
-                    <a-skeleton v-if="dropdowns.companies.loading || dropdowns.jobDepartments.loading" active :paragraph="false" v-for="index in 2" :key="index"></a-skeleton>
-                    <a-col :xs="24" :sm="24" :md="24" v-if="!dropdowns.companies.loading && !dropdowns.jobDepartments.loading">
-                        <a-row :gutter="18">
-                            <a-col :xs="24" :sm="8" :md="6">
-                                <a-form-item label="Companies" class="mb-0">
-                                    <a-select v-model="filters.companies" style="width: 100%" mode="multiple">
-                                        <a-select-option v-for="(company, index) in dropdowns.companies.dataSource" :key="index" :value="company.id">
-                                            {{company.label}}
-                                        </a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="8" :md="6">
-                                <a-form-item label="Job Department" class="mb-0">
-                                    <a-select v-model="filters.jobDepartments" style="width: 100%" mode="multiple">
-                                        <a-select-option v-for="(jobDepartment, index) in dropdowns.jobDepartments.dataSource" :key="index" :value="jobDepartment.id">
-                                            {{jobDepartment.label}}
-                                        </a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="8" :md="6">
-                                <a-form-item label="Job From" class="mb-0">
-                                    <a-date-picker v-model="filters.fromJob" format="DD-MM-YYYY" placeholder=""/>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="8" :md="6">
-                                <a-form-item label="Job To" class="mb-0">
-                                    <a-date-picker v-model="filters.toJob" format="DD-MM-YYYY" placeholder=""/>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                    </a-col>
-                    <a-col :xs="24" :sm="24" :md="24" v-if="!dropdowns.companies.loading && !dropdowns.jobDepartments.loading">
-                        <a-row :gutter="18" v-if="!dropdowns.companies.loading">
-                            <a-col :xs="24" :sm="8" :md="6">
-                                <a-form-item label="Sort By" class="mb-0">
-                                    <a-select v-model="filters.sortField" style="width: 100%" allowClear>
-                                        <a-select-option value="company_id">Company</a-select-option>
-                                        <a-select-option value="job_department_id">Job Department</a-select-option>
-                                        <a-select-option value="from_date">From Date</a-select-option>
-                                        <a-select-option value="to_date">To Date</a-select-option>
-                                        <a-select-option value="archived_at">Archived Column</a-select-option>
-                                        <a-select-option value="status">Active Column</a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="8" :md="6">
-                                <a-form-item label="Sort Order" class="mb-0">
-                                    <a-select v-model="filters.sortOrder" style="width: 100%" allowClear>
-                                        <a-select-option value="desc">Descending</a-select-option>
-                                        <a-select-option value="asc">Ascending</a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="10" :md="8">
-                                <a-row :gutter="16">
-                                    <a-col :xs="24" :sm="12">
-                                        <a-form-item label=" " class="mb-0" :colon="false">
-                                            <a-checkbox :checked="filters.archived_at" v-model="filters.archived_at">
-                                                Archived
-                                            </a-checkbox>
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :xs="24" :sm="12">
-                                        <a-form-item label=" " class="mb-0" :colon="false">
-                                            <a-checkbox :checked="filters.expired" v-model="filters.expired">
-                                                Expired
-                                            </a-checkbox>
-                                        </a-form-item>
-                                    </a-col>
-                                </a-row>
-                            </a-col>
-                            <a-col :xs="24" :sm="6" :md="4">
-                                <a-form-item label=" " class="mb-0" :colon="false">
-                                    <a-button type="primary" html-type="submit">
-                                        <a-icon type="filter" /> Apply
-                                    </a-button>
-                                    <a href="javascript:;" class="ml-10" title="Export PDF" @click="handlePdfExportClick">
-                                        <a-icon type="file-pdf" />
-                                    </a>
-                                    <a href="javascript:;" class="ml-10" title="Export CSV" @click="handleCsvExportClick">
-                                        <a-icon type="file-excel" />
-                                    </a>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                    </a-col>
-                </a-row>
+                <b-row>
+                    <b-col cols="12" v-if="dropdowns.companies.loading || dropdowns.jobDepartments.loading">
+                        <b-skeleton v-for="index in 2" :key="index"></b-skeleton>
+                    </b-col>
+                    <b-col cols="12" v-if="!dropdowns.companies.loading && !dropdowns.jobDepartments.loading">
+                        <b-row>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="Companies" class="mb-15">
+                                    <v-select
+                                        v-model="filters.companies"
+                                        :options="dropdowns.companies.dataSource"
+                                        label="label"
+                                        :reduce="company => company.id"
+                                        multiple
+                                        placeholder="Select Companies"
+                                    ></v-select>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="Job Department" class="mb-15">
+                                    <v-select
+                                        v-model="filters.jobDepartments"
+                                        :options="dropdowns.jobDepartments.dataSource"
+                                        label="label"
+                                        :reduce="department => department.id"
+                                        multiple
+                                        placeholder="Select Job Departments"
+                                    ></v-select>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="Job From" class="mb-15">
+                                    <date-picker v-model="filters.fromJob" format="DD-MM-YYYY" value-type="YYYY-MM-DD" placeholder="" />
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="Job To" class="mb-15">
+                                    <date-picker v-model="filters.toJob" format="DD-MM-YYYY" value-type="YYYY-MM-DD" placeholder="" />
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="Sort By" class="mb-15">
+                                    <v-select
+                                        v-model="filters.sortField"
+                                        :options="sortFieldOptions"
+                                        label="text"
+                                        :reduce="option => option.value"
+                                        placeholder="Sort By"
+                                    ></v-select>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="Sort Order" class="mb-15">
+                                    <v-select
+                                        v-model="filters.sortOrder"
+                                        :options="sortOrderOptions"
+                                        label="text"
+                                        :reduce="option => option.value"
+                                        placeholder="Sort Order"
+                                    ></v-select>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="Other Filters" class="mb-15">
+                                    <b-form-checkbox v-model="filters.archived_at" class="mb-5">
+                                        Archived
+                                    </b-form-checkbox>
+                                    <b-form-checkbox v-model="filters.expired">
+                                        Expired
+                                    </b-form-checkbox>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4" class="d-flex align-items-end">
+                                <b-form-group class="mb-15 w-100">
+                                    <b-button variant="primary" type="submit">
+                                        <i class="bi bi-check2-circle mr-5"></i>
+                                        Apply Filters
+                                    </b-button>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
+                    </b-col>
+                </b-row>
             </form>
-        </a-card>
-        <a-card>
-            <a-skeleton v-if="loading" active :paragraph="false" v-for="index in 15" :key="index"></a-skeleton>
-            <div class="ant-table-wrapper" v-if="!loading">
-                <a-table
-                    class="fit-table report-jobs-table"
-                    :columns="columns"
-                    :rowKey="record => record.id"
-                    :dataSource="dataSource"
-                    :pagination="false"
-                    :loading="loading">
-                    <template slot="job_title" slot-scope="text, record, index">
-                        <div>{{record.title}}</div>
-                        <div> <strong>Company: </strong> {{record.company}} </div>
-                        <div> <strong>Department: </strong> {{record.job_department}} </div>
+        </b-card>
+        <b-card>
+            <b-skeleton-table v-if="loading" :rows="15" :columns="columns.length"></b-skeleton-table>
+            <div v-if="!loading">
+                <b-table
+                    class="fit-table report-jobs-table report-modern-table"
+                    responsive
+                    hover
+                    show-empty
+                    empty-text="No data available"
+                    :fields="columns"
+                    :items="dataSource"
+                    :busy="loading"
+                >
+                    <template #cell(title)="data">
+                        <div class="job-title-cell">
+                            <div class="job-title-text">{{data.item.title}}</div>
+                            <div class="job-meta-line">
+                                {{data.item.company}} <span v-if="data.item.job_department">- {{data.item.job_department}}</span>
+                            </div>
+                        </div>
                     </template>
-                    <template slot="from_date" slot-scope="text, record, index">
-                        <div> <strong>From Date: </strong> {{ covertDate(record.from_date) }}</div>
-                        <div> <strong>To Date: </strong> {{ covertDate(record.to_date) }}</div>
+                    <template #cell(from_date)="data">
+                        <div class="report-date-text">
+                            From {{ covertDate(data.item.from_date) }}
+                        </div>
+                        <div class="job-meta-line">
+                            To {{ covertDate(data.item.to_date) }}
+                        </div>
                     </template>
-                    <template slot="job_applications" slot-scope="text, record, index">
-                        {{record.job_applications.length}}
+                    <template #cell(job_applications)="data">
+                        <span class="report-count-pill">
+                            {{(data.item.job_applications) ? data.item.job_applications.length : 0}}
+                        </span>
                     </template>
-                    <template slot="status" slot-scope="text, record, index">
-                        <span v-if="record.status"><a-tag color="blue">Yes</a-tag></span>
-                        <span v-if="!record.status"><a-tag color="red">No</a-tag></span>
+                    <template #cell(status)="data">
+                        <b-badge v-if="data.item.status" class="job-status-badge job-status-active">Active</b-badge>
+                        <b-badge v-if="!data.item.status" class="job-status-badge job-status-inactive">Inactive</b-badge>
                     </template>
-                    <template slot="archived_at" slot-scope="text, record, index">
-                        <span v-if="record.archived_at"><a-tag color="blue">Yes</a-tag></span>
-                        <span v-if="!record.archived_at"><a-tag color="red">No</a-tag></span>
+                    <template #cell(archived_at)="data">
+                        <b-badge v-if="data.item.archived_at" class="job-application-status-badge job-application-status-hold">Archived</b-badge>
+                        <b-badge v-if="!data.item.archived_at" class="job-application-status-badge job-application-status-hired">Open</b-badge>
                     </template>
-                </a-table>
+                </b-table>
             </div>
-        </a-card>
+        </b-card>
     </div>
 </template>
 
 <script>
     import {request} from "../../util/request";
     import qs from "qs";
-    import {dateToUtcDate, utcDateToLocalDate} from "../../util/utils";
     import moment from "moment-timezone";
     import mixins from "../../util/mixins";
     // @ is an alias to /src
@@ -153,34 +170,24 @@
                 dataSource: [],
                 columns: [
                     {
-                        title: 'Job Title',
-                        dataIndex: 'title',
-                        width: 180,
-                        scopedSlots: { customRender: 'job_title' },
+                        key: 'title',
+                        label: 'Job Title',
                     },
                     {
-                        title: 'Job Date',
-                        dataIndex: 'from_date',
-                        width: 180,
-                        scopedSlots: { customRender: 'from_date' },
+                        key: 'from_date',
+                        label: 'Job Date',
                     },
                     {
-                        title: 'Is active?',
-                        dataIndex: 'status',
-                        width: 50,
-                        scopedSlots: { customRender: 'status' },
+                        key: 'status',
+                        label: 'Is active?',
                     },
                     {
-                        title: 'Number of job applications',
-                        dataIndex: 'job_applications',
-                        width: 150,
-                        scopedSlots: { customRender: 'job_applications' },
+                        key: 'job_applications',
+                        label: 'Number of job applications',
                     },
                     {
-                        title: 'Is archived?',
-                        dataIndex: 'archived_at',
-                        width: 50,
-                        scopedSlots: { customRender: 'archived_at' },
+                        key: 'archived_at',
+                        label: 'Is archived?',
                     },
                 ],
                 filters: {
@@ -203,7 +210,19 @@
                         loading: false,
                         dataSource: []
                     }
-                }
+                },
+                sortFieldOptions: [
+                    {value: 'company_id', text: 'Company'},
+                    {value: 'job_department_id', text: 'Job Department'},
+                    {value: 'from_date', text: 'From Date'},
+                    {value: 'to_date', text: 'To Date'},
+                    {value: 'archived_at', text: 'Archived Column'},
+                    {value: 'status', text: 'Active Column'},
+                ],
+                sortOrderOptions: [
+                    {value: 'desc', text: 'Descending'},
+                    {value: 'asc', text: 'Ascending'},
+                ],
             }
         },
         mounted() {
@@ -214,12 +233,47 @@
         methods: {
             loadList() {
                 this.loading = true;
+                const filters = {
+                    ...this.filters,
+                    fromJob: ((this.filters.fromJob) ? moment(this.filters.fromJob).format('YYYY-MM-DD') : null),
+                    toJob: ((this.filters.toJob) ? moment(this.filters.toJob).format('YYYY-MM-DD') : null),
+                };
+
+                if (!filters.companies.length) {
+                    delete filters.companies;
+                }
+
+                if (!filters.jobDepartments.length) {
+                    delete filters.jobDepartments;
+                }
+
+                if (!filters.fromJob) {
+                    delete filters.fromJob;
+                }
+
+                if (!filters.toJob) {
+                    delete filters.toJob;
+                }
+
+                if (!filters.sortField) {
+                    delete filters.sortField;
+                }
+
+                if (!filters.sortOrder) {
+                    delete filters.sortOrder;
+                }
+
+                if (!filters.archived_at) {
+                    delete filters.archived_at;
+                }
+
+                if (!filters.expired) {
+                    delete filters.expired;
+                    delete filters.now;
+                }
+
                 const listQueryParams = {
-                    filters: {
-                        ...this.filters,
-                        fromJob: ((this.filters.fromJob) ? this.filters.fromJob.format('YYYY-MM-DD') : ''),
-                        toJob: ((this.filters.toJob) ? this.filters.toJob.format('YYYY-MM-DD') : ''),
-                    },
+                    filters: filters,
                 };
 
                 request({
@@ -304,8 +358,8 @@
                     job_title: item.title + ' || Company: '+ item.company +' || Department: '+item.job_department,
                     job_date: 'From Date: '+ this.covertDate(item.from_date) +' || To Date: '+this.covertDate(item.to_date),
                     is_active: ((item.status) ? 'Yes' : 'No'),
-                    number_of_application: item.job_applications.length,
-                    is_archived: ((item.is_archived) ? 'Yes' : 'No'),
+                    number_of_application: ((item.job_applications) ? item.job_applications.length : 0),
+                    is_archived: ((item.archived_at) ? 'Yes' : 'No'),
                 }
             }
         },

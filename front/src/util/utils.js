@@ -77,10 +77,11 @@ export function refresh() {
 
 export function handleServerError(errors) {
     if (errors && errors.status && errors.status === 500) {
-        // console.log(errors.data.message);
         serverError();
-        thisFunctionDoesNotExistAndWasCreatedWithTheOnlyPurposeOfStopJavascriptExecutionOfAllTypesIncludingCatchAndAnyArbitraryWeirdScenario();
+        return true;
     }
+
+    return false;
 }
 
 export function utcDateToLocalDate(date, toFormat = 'DD-MM-YYYY HH:mm A', fromFormat = 'YYYY-MM-DD HH:mm:ss') {

@@ -1,206 +1,245 @@
 <template>
-    <a-row>
-        <a-col span="24">
-            <div>
-                <a-row>
-                    <a-col :xs="24" :sm="24" :md="12">
-                        <h2 class="mb-0">
-                            All <strong>Users</strong>
-                        </h2>
-                    </a-col>
-                    <a-col :xs="24" :sm="24" :md="12" class="text-right">
-                        <a-button shape="round" class="mr-10" @click="handleFormClick" title="Add New Entry">New Entry</a-button>
-                        <a-button shape="round" class="mr-10" icon="filter" @click="handleFilterClick" title="Advance filter" />
-                        <a-dropdown>
-                            <a href="javascript:;" title="Export data"><a-icon type="ellipsis" :style="{ fontSize: '20px', color: '#08c' }"/></a>
-                            <a-menu slot="overlay">
-                                <a-menu-item key="1" @click="handleCsvExportClick"> <a-icon type="file-excel" /> Export CSV </a-menu-item>
-                                <a-menu-item key="2" @click="handlePdfExportClick"> <a-icon type="file-pdf" /> Export PDF </a-menu-item>
-                            </a-menu>
-                        </a-dropdown>
-                    </a-col>
-                </a-row>
-            </div>
+    <b-row>
+        <b-col cols="12">
+            <b-row class="align-items-center job-header-simple">
+                <b-col cols="12" md="6">
+                    <h2 class="job-header-title">
+                        Users
+                    </h2>
+                </b-col>
+
+                <b-col cols="12" md="6" class="text-md-right mt-15 mt-md-0">
+                    <b-button variant="primary" class="mr-10" @click="handleFormClick" title="Add New User">
+                        <i class="bi bi-plus-circle mr-5"></i>
+                        New User
+                    </b-button>
+                    <b-button variant="outline-secondary" class="mr-10" @click="handleFilterClick" title="Advance Filter">
+                        <i class="bi bi-funnel mr-5"></i>
+                        Filter
+                    </b-button>
+                    <b-dropdown right variant="outline-secondary" title="Export Data" text="Export">
+                        <b-dropdown-item @click="handleCsvExportClick">Export CSV</b-dropdown-item>
+                        <b-dropdown-item @click="handlePdfExportClick">Export PDF</b-dropdown-item>
+                    </b-dropdown>
+                </b-col>
+            </b-row>
             <div class="mt-20">
-                <a-drawer
+                <b-sidebar
+                    v-model="filterVisible"
                     title="Filter Panel"
-                    placement="left"
-                    :closable="false"
-                    @close="handleFilterClose"
-                    :visible="filterVisible"
-                    :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto', paddingBottom: '108px'}"
+                    shadow
+                    backdrop
+                    no-header-close
                 >
-                    <form @submit.prevent="handleSearch" autocomplete="off">
-                        <a-row>
-                            <a-col>
-                                <a-form-item label="First Name" class="mb-10">
-                                    <a-input v-model="filters.first_name" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="Last Name" class="mb-10">
-                                    <a-input v-model="filters.last_name" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="Email" class="mb-10">
-                                    <a-input v-model="filters.email" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="Gender" class="mb-10">
-                                    <a-select allowClear v-model="filters.gender">
-                                        <a-select-option value="1">Male</a-select-option>
-                                        <a-select-option value="2">Female</a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="User Type" class="mb-10">
-                                    <a-select allowClear v-model="filters.type">
-                                        <a-select-option value="1">Admin</a-select-option>
-                                        <a-select-option value="2">Candidate</a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
+                    <form @submit.prevent="handleSearch" autocomplete="off" class="p-3">
+                        <b-form-group label="First Name" class="mb-10">
+                            <b-form-input v-model="filters.first_name"></b-form-input>
+                        </b-form-group>
+                        <b-form-group label="Last Name" class="mb-10">
+                            <b-form-input v-model="filters.last_name"></b-form-input>
+                        </b-form-group>
+                        <b-form-group label="Email" class="mb-10">
+                            <b-form-input v-model="filters.email"></b-form-input>
+                        </b-form-group>
+                        <b-form-group label="Gender" class="mb-10">
+                            <v-select
+                                v-model="filters.gender"
+                                :options="genderOptions"
+                                label="text"
+                                :reduce="option => option.value"
+                                placeholder="Select Gender"
+                            ></v-select>
+                        </b-form-group>
+                        <b-form-group label="User Type" class="mb-10">
+                            <v-select
+                                v-model="filters.type"
+                                :options="typeOptions"
+                                label="text"
+                                :reduce="option => option.value"
+                                placeholder="Select User Type"
+                            ></v-select>
+                        </b-form-group>
                         <div class="filter-footer text-right">
-                            <a-button type="primary" html-type="submit" class="mr-5">Filter</a-button>
-                            <a-button @click="handleFilterClose">Cancel</a-button>
+                            <b-button variant="primary" type="submit" class="mr-5">Filter</b-button>
+                            <b-button @click="handleFilterClose">Cancel</b-button>
                         </div>
                     </form>
-                </a-drawer>
+                </b-sidebar>
 
-                <a-drawer
+                <b-sidebar
+                    v-model="formVisible"
                     :title="formTitle"
-                    placement="right"
-                    :closable="false"
-                    @close="handleFormClose"
-                    :visible="formVisible"
-                    :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto', paddingBottom: '108px'}"
+                    right
+                    shadow
+                    backdrop
+                    no-header-close
+                    width="760px"
+                    sidebar-class="user-form-sidebar"
+                    body-class="user-form-sidebar-body"
                 >
                     <form @submit.prevent="handleFormSubmit" autocomplete="off">
-                        <a-row>
-                            <a-col>
-                                <a-form-item label="First Name" class="mb-10 required-input"
-                                 :validate-status="(formErrors.has('first_name') ? 'error' : '')"
-                                 :help="formErrors.first('first_name')">
-                                    <a-input v-model="formFields.first_name" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="Last Name" class="mb-10 required-input"
-                                 :validate-status="(formErrors.has('last_name') ? 'error' : '')"
-                                 :help="formErrors.first('last_name')">
-                                    <a-input v-model="formFields.last_name" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="Password" class="mb-10"
-                                 :class="{'required-input': !formFields.id}"
-                                 :validate-status="(formErrors.has('password') ? 'error' : '')"
-                                 :help="formErrors.first('password')">
-                                    <a-input type="password" v-model="formFields.password" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="Password Confirm" class="mb-10"
-                                 :class="{'required-input': !formFields.id}"
-                                 :validate-status="(formErrors.has('password_confirmation') ? 'error' : '')"
-                                 :help="formErrors.first('password_confirmation')">
-                                    <a-input type="password" v-model="formFields.password_confirmation" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="Email" class="mb-10 required-input"
-                                 :validate-status="(formErrors.has('email') ? 'error' : '')"
-                                 :help="formErrors.first('email')">
-                                    <a-input v-model="formFields.email" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="Gender" class="mb-10 required-input"
-                                 :validate-status="(formErrors.has('gender') ? 'error' : '')"
-                                 :help="formErrors.first('gender')">
-                                    <a-select allowClear v-model="formFields.gender">
-                                        <a-select-option value="1">Male</a-select-option>
-                                        <a-select-option value="2">Female</a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="Birthday" class="mb-10 required-input"
-                                     :validate-status="(formErrors.has('birthday') ? 'error' : '')"
-                                     :help="formErrors.first('birthday')">
-                                    <a-date-picker v-model="formFields.birthday" format="DD-MM-YYYY" placeholder=""/>
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="User Type" class="mb-10 required-input"
-                                             :validate-status="(formErrors.has('type') ? 'error' : '')"
-                                             :help="formErrors.first('type')">
-                                    <a-select allowClear v-model="formFields.type">
-                                        <a-select-option value="1">Admin</a-select-option>
-                                        <a-select-option value="2">Candidate</a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="is active?"  class="mb-10">
-                                    <a-checkbox :checked="formFields.status" v-model="formFields.status">
-                                        Yes
-                                    </a-checkbox>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
+                        <b-form-group
+                            label="First Name *"
+                            class="mb-10 required-input"
+                            :state="invalidState('first_name')"
+                            :invalid-feedback="formErrors.first('first_name')"
+                        >
+                            <b-form-input v-model="formFields.first_name"></b-form-input>
+                        </b-form-group>
+                        <b-form-group
+                            label="Last Name *"
+                            class="mb-10 required-input"
+                            :state="invalidState('last_name')"
+                            :invalid-feedback="formErrors.first('last_name')"
+                        >
+                            <b-form-input v-model="formFields.last_name"></b-form-input>
+                        </b-form-group>
+                        <b-form-group
+                            :label="formFields.id ? 'Password' : 'Password *'"
+                            class="mb-10"
+                            :class="{'required-input': !formFields.id}"
+                            :state="invalidState('password')"
+                            :invalid-feedback="formErrors.first('password')"
+                        >
+                            <b-form-input type="password" v-model="formFields.password"></b-form-input>
+                        </b-form-group>
+                        <b-form-group
+                            :label="formFields.id ? 'Password Confirm' : 'Password Confirm *'"
+                            class="mb-10"
+                            :class="{'required-input': !formFields.id}"
+                            :state="invalidState('password_confirmation')"
+                            :invalid-feedback="formErrors.first('password_confirmation')"
+                        >
+                            <b-form-input type="password" v-model="formFields.password_confirmation"></b-form-input>
+                        </b-form-group>
+                        <b-form-group
+                            label="Email *"
+                            class="mb-10 required-input"
+                            :state="invalidState('email')"
+                            :invalid-feedback="formErrors.first('email')"
+                        >
+                            <b-form-input v-model="formFields.email"></b-form-input>
+                        </b-form-group>
+                        <b-form-group
+                            label="Gender *"
+                            class="mb-10 required-input"
+                            :state="invalidState('gender')"
+                            :invalid-feedback="formErrors.first('gender')"
+                        >
+                            <v-select
+                                v-model="formFields.gender"
+                                :options="genderOptions"
+                                label="text"
+                                :reduce="option => option.value"
+                                placeholder="Select Gender"
+                            ></v-select>
+                        </b-form-group>
+                        <b-form-group
+                            label="Birthday *"
+                            class="mb-10 required-input"
+                            :state="invalidState('birthday')"
+                            :invalid-feedback="formErrors.first('birthday')"
+                        >
+                            <date-picker
+                                v-model="formFields.birthday"
+                                format="DD-MM-YYYY"
+                                value-type="YYYY-MM-DD"
+                                placeholder=""
+                            />
+                        </b-form-group>
+                        <b-form-group
+                            :label="formFields.id ? 'User Type' : 'User Type *'"
+                            class="mb-10"
+                            :class="{'required-input': !formFields.id}"
+                            :state="invalidState('type')"
+                            :invalid-feedback="formErrors.first('type')"
+                        >
+                            <v-select
+                                v-model="formFields.type"
+                                :options="typeOptions"
+                                label="text"
+                                :reduce="option => option.value"
+                                placeholder="Select User Type"
+                            ></v-select>
+                        </b-form-group>
+                        <b-form-group label="is active?" class="mb-10">
+                            <b-form-checkbox v-model="formFields.status">Yes</b-form-checkbox>
+                        </b-form-group>
                         <div class="filter-footer text-right">
-                            <a-button type="primary" html-type="submit" class="mr-5">Submit</a-button>
-                            <a-button @click="handleFormClose">Cancel</a-button>
+                            <b-button variant="primary" type="submit" class="mr-5">Submit</b-button>
+                            <b-button @click="handleFormClose">Cancel</b-button>
                         </div>
                     </form>
-                </a-drawer>
+                </b-sidebar>
 
-                <a-table
-                    class="fit-table users-table"
-                    :columns="columns"
-                    :rowKey="record => record.id"
-                    :dataSource="dataSource"
-                    :pagination="pagination"
-                    :loading="loading"
-                    @change="handleTableChange">
-                    <span slot="gender" slot-scope="gender">
-                        <span v-if="gender === 1">Male</span>
-                        <span v-else>FeMale</span>
-                    </span>
-                    <span slot="birthday" slot-scope="birthday">
-                        <span>{{momentFormatter(birthday).format('DD-MM-YYYY')}}</span>
-                    </span>
-                    <span slot="type" slot-scope="type">
-                        <span v-if="type === 1">Admin</span>
-                        <span v-if="type === 2">Candidate</span>
-                    </span>
-                    <span slot="email_verified_at" slot-scope="text, record, index">
-                        <span v-if="record.is_active"><a-tag color="blue">Yes</a-tag></span>
-                        <span v-if="!record.is_active"><a-tag color="red">No</a-tag></span>
-                    </span>
-                    <template slot="action" slot-scope="text, record, index" class="text-right">
-                        <a-button size="small" type="default" shape="circle" class="mr-5" title="Edit" @click="handleEditRecord(record.id)">
-                            <a-icon type="edit" />
-                        </a-button>
-                        <a-popconfirm
-                            placement="left"
-                            title="Sure to delete?"
-                            @confirm="() => handleDeleteRecord(record.id)"
-                        >
-                            <a-button size="small" type="default" shape="circle" title="Delete">
-                                <a-icon type="delete" />
-                            </a-button>
-                        </a-popconfirm>
+                <b-table
+                    class="fit-table users-table user-modern-table"
+                    responsive
+                    hover
+                    show-empty
+                    empty-text="No data available"
+                    no-local-sorting
+                    :fields="columns"
+                    :items="dataSource"
+                    :busy="loading"
+                    :sort-by.sync="tableSortBy"
+                    :sort-desc.sync="tableSortDesc"
+                    @sort-changed="handleSortChange"
+                >
+                    <template #cell(first_name)="data">
+                        <div class="job-title-cell">
+                            <div class="job-title-text">
+                                {{data.item.first_name}} {{data.item.last_name}}
+                            </div>
+                            <div class="job-meta-line">
+                                {{data.item.email}}
+                            </div>
+                        </div>
                     </template>
-                </a-table>
+                    <template #cell(gender)="data">
+                        <b-badge class="user-light-badge">
+                            <span v-if="data.value === 1">Male</span>
+                            <span v-else>Female</span>
+                        </b-badge>
+                    </template>
+                    <template #cell(birthday)="data">
+                        <span>{{momentFormatter(data.value).format('DD-MM-YYYY')}}</span>
+                    </template>
+                    <template #cell(type)="data">
+                        <b-badge class="user-type-badge">
+                            <span v-if="data.value === 1">Admin</span>
+                            <span v-if="data.value === 2">Candidate</span>
+                        </b-badge>
+                    </template>
+                    <template #cell(email_verified_at)="data">
+                        <b-badge v-if="data.item.is_active" class="job-status-badge job-status-active">Active</b-badge>
+                        <b-badge v-if="!data.item.is_active" class="job-status-badge job-status-inactive">Inactive</b-badge>
+                    </template>
+                    <template #cell(action)="data">
+                        <div class="job-action-buttons text-right">
+                            <b-button size="sm" variant="outline-primary" class="mr-5" title="Edit" @click="handleEditRecord(data.item.id)">
+                                <i class="bi bi-pencil-square mr-5"></i>
+                                Edit
+                            </b-button>
+                            <b-button size="sm" variant="outline-danger" title="Delete" @click="confirmDeleteRecord(data.item.id)">
+                                <i class="bi bi-trash mr-5"></i>
+                                Delete
+                            </b-button>
+                        </div>
+                    </template>
+                </b-table>
+                <b-pagination
+                    v-if="pagination && pagination.total"
+                    v-model="paginationCurrent"
+                    :total-rows="pagination.total"
+                    :per-page="pagination.per_page || pagination.pageSize || 10"
+                    align="right"
+                    class="mt-3"
+                    @input="handlePageChange"
+                ></b-pagination>
             </div>
-        </a-col>
-    </a-row>
+        </b-col>
+    </b-row>
 </template>
 <script>
     import {request} from "../../util/request";
@@ -232,61 +271,43 @@
                 dataSource: [],
                 pagination: {
                     page: 1,
+                    total: 0,
+                    per_page: 10,
                 },
+                tableSortBy: null,
+                tableSortDesc: false,
                 loading: false,
                 columns: [
                     {
-                        title: 'First name',
-                        dataIndex: 'first_name',
-                        width: 150,
-                        sorter: true,
+                        key: 'first_name',
+                        label: 'User',
+                        sortable: true,
                     },
                     {
-                        title: 'Last name',
-                        dataIndex: 'last_name',
-                        width: 150,
-                        sorter: true,
+                        key: 'gender',
+                        label: 'Gender',
+                        sortable: true,
                     },
                     {
-                        title: 'Email',
-                        dataIndex: 'email',
-                        width: 150,
-                        sorter: true,
+                        key: 'birthday',
+                        label: 'Birthday',
+                        sortable: true,
                     },
                     {
-                        title: 'Gender',
-                        dataIndex: 'gender',
-                        width: 150,
-                        sorter: true,
-                        scopedSlots: { customRender: 'gender' },
+                        key: 'type',
+                        label: 'Type',
+                        sortable: true,
                     },
                     {
-                        title: 'Birthday',
-                        dataIndex: 'birthday',
-                        width: 150,
-                        sorter: true,
-                        scopedSlots: { customRender: 'birthday' },
+                        key: 'email_verified_at',
+                        label: 'Is Active?',
+                        sortable: true,
                     },
                     {
-                        title: 'Type',
-                        dataIndex: 'type',
-                        width: 100,
-                        sorter: true,
-                        scopedSlots: { customRender: 'type' },
-                    },
-                    {
-                        title: 'Is Active?',
-                        dataIndex: 'email_verified_at',
-                        width: 80,
-                        sorter: true,
-                        scopedSlots: { customRender: 'email_verified_at' },
-                    },
-                    {
-                        title: 'Action',
-                        className: 'text-right',
-                        dataIndex: 'action',
-                        width: 150,
-                        scopedSlots: { customRender: 'action' },
+                        key: 'action',
+                        label: 'Action',
+                        thClass: 'text-right',
+                        tdClass: 'text-right',
                     }
                 ],
                 listQueryParams: {},
@@ -295,18 +316,43 @@
                     first_name: null,
                     last_name: null,
                     email: null,
-                    gender: '',
+                    gender: null,
                     type: null,
                 },
                 formVisible: false,
                 formFields: {...DEFAULT_FORM_STATE},
-                formErrors: new Error({})
+                formErrors: new Error({}),
+                genderOptions: [
+                    {value: '1', text: 'Male'},
+                    {value: '2', text: 'Female'},
+                ],
+                typeOptions: [
+                    {value: '1', text: 'Admin'},
+                    {value: '2', text: 'Candidate'},
+                ],
             }
         },
         mounted() {
             this.loadList({ page: 1 });
         },
         methods: {
+            invalidState(field) {
+                return this.formErrors.has(field) ? false : null;
+            },
+            handleSortChange(ctx) {
+                this.handleTableChange(
+                    {current: this.paginationCurrent, pageSize: this.pagination.per_page || 10},
+                    {},
+                    {field: ctx.sortBy, order: (ctx.sortDesc ? 'descend' : 'ascend')}
+                );
+            },
+            handlePageChange(page) {
+                this.handleTableChange(
+                    {current: page, pageSize: this.pagination.per_page || 10},
+                    {},
+                    {field: this.tableSortBy, order: (this.tableSortDesc ? 'descend' : 'ascend')}
+                );
+            },
             handleTableChange(pagination, filters, sorter) {
                 const pager = { ...this.pagination };
                 pager.current = pagination.current;
@@ -322,6 +368,12 @@
                 this.loadList(listQueryParams);
             },
             loadList(listQueryParams) {
+                listQueryParams = {
+                    page: 1,
+                    pageSize: 10,
+                    ...listQueryParams,
+                };
+
                 this.loading = true;
                 this.formErrors = new Error({});
                 request({
@@ -333,13 +385,28 @@
                 .then((response) => {
                     const {data, meta} = response;
                     this.dataSource = data;
-                    this.pagination = meta;
+                    this.pagination = meta || {
+                        page: 1,
+                        total: data.length,
+                        per_page: 10,
+                    };
                 })
-                .catch(() => this.dataSource = [] )
+                .catch(() => {
+                    this.dataSource = [];
+                    this.pagination = {
+                        page: 1,
+                        total: 0,
+                        per_page: 10,
+                    };
+                })
                 .finally(() => this.loading = false);
             },
             handleSearch() {
-                this.listQueryParams = {...this.listQueryParams, filters: this.filters};
+                this.listQueryParams = {
+                    ...this.listQueryParams,
+                    page: 1,
+                    filters: this.filters,
+                };
                 this.loadList(this.listQueryParams);
             },
             handleFilterClick() {
@@ -392,7 +459,7 @@
                     this.formFields = {
                         ...response.data,
                         password: null,
-                        birthday: moment(response.data.birthday),
+                        birthday: response.data.birthday ? moment(response.data.birthday).format('YYYY-MM-DD') : null,
                         gender: response.data.gender.toString(),
                         status: response.data.is_active,
                         type: response.data.type.toString()
@@ -402,6 +469,11 @@
                 .catch((errors) => {
 
                 })
+            },
+            confirmDeleteRecord(id) {
+                if (window.confirm('Sure to delete?')) {
+                    this.handleDeleteRecord(id);
+                }
             },
             handleDeleteRecord(id) {
                 request({
@@ -459,7 +531,14 @@
             }
         },
         computed: {
-
+            paginationCurrent: {
+                get() {
+                    return this.pagination.current_page || this.pagination.current || this.pagination.page || 1;
+                },
+                set(value) {
+                    this.pagination = {...this.pagination, current: value, current_page: value};
+                }
+            }
         }
     }
 </script>

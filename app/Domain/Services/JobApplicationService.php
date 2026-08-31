@@ -6,6 +6,7 @@ use App\Domain\Models\Interview;
 use App\Domain\Models\InterviewStageHistory;
 use App\Domain\Models\InterviewStatusHistory;
 use App\Domain\Models\JobApplication;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 
@@ -20,7 +21,7 @@ class JobApplicationService extends BaseService
 
     public $filterColumns = ['job_application_number', 'status'];
 
-    public $with = ['job', 'candidate', 'user_document'];
+    public $with = ['job', 'candidate', 'user_document', 'interview'];
 
     protected $primaryKey = 'id';
 
@@ -75,9 +76,22 @@ class JobApplicationService extends BaseService
         return $this->getDetailByGuid($id, []);
     }
 
+    protected function filterQuery(Builder $query, $input = [])
+    {
+        $filters = Arr::get($input, 'filters', []);
+
+        if (isset($filters['job_application_number']) && $filters['job_application_number'] !== '') {
+            $query->where('job_application_number', $filters['job_application_number']);
+        }
+
+        if (isset($filters['status']) && $filters['status'] !== '') {
+            $query->where('status', (int) $filters['status']);
+        }
+    }
+
     public function getOwnList(array $input = [])
     {
-        $query = $this->model::query()->with(['job.experienceLevels', 'job.qualifications']);
+        $query = $this->model::query()->with(['interview', 'job.experienceLevels', 'job.qualifications']);
         $query = $this->listQuery($query, $input);
         $query = $query->where('candidate_id', $input['candidate_id']);
         return $this->resultQuery($query, $input);

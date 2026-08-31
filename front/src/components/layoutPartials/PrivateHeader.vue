@@ -1,35 +1,28 @@
 <template>
-    <a-layout-header id="private-content-header">
-        <a-row >
-            <a-col span="12">
-                <a-icon
-                    class="trigger"
-                    :type="sidebarCollapsed ? 'menu-unfold' : 'menu-fold'"
-                    @click="handleCollapseClick"
-                />
-            </a-col>
-            <a-col span="12" style="text-align: right;">
-                <router-link :to="{name: 'privateProfile'}" title="Profile">
-                    <span class="nav-text text-capitalize">
-                        {{authUser.first_name}} {{(authUser.last_name) ? authUser.last_name[0]+'.' : ''}}
-                    </span>
-                </router-link>
-                <a href="javascript:;" @click="logout()" title="Logout">
-                    <a-icon type="logout" />
-                </a>
-            </a-col>
-        </a-row>
-    </a-layout-header>
+    <header id="private-content-header">
+        <button class="sidebar-toggle" type="button" @click="handleCollapseClick">
+            {{ sidebarCollapsed ? 'Open Menu' : 'Close Menu' }}
+        </button>
+
+        <div class="header-actions">
+            <router-link :to="{name: 'privateProfile'}" class="profile-link" title="Profile">
+                {{authUser.first_name}} {{(authUser.last_name) ? authUser.last_name[0]+'.' : ''}}
+            </router-link>
+
+            <button class="logout-button" type="button" @click="logout()" title="Logout">
+                <b-icon icon="box-arrow-right"></b-icon>
+            </button>
+        </div>
+    </header>
 </template>
+
 <script>
     import { mapFields } from 'vuex-map-fields';
     import {refresh, removeStorage} from "../../util/utils";
 
     export default {
         data() {
-            return {
-
-            }
+            return {};
         },
         methods: {
             handleCollapseClick() {

@@ -1,112 +1,185 @@
 <template>
-    <div class="container">
-        <a-row class="back-gray-2 wrapper">
-            <a-col :xs="24" :sm="12" :md="6">
-                <div class="mr-15" v-if="sideLoading">
-                    <a-skeleton active :paragraph="false" v-for="index in 10" :key="index"></a-skeleton>
-                </div>
-                <a-menu mode="vertical" class="mr-15 back-gray-1 sidebar" v-if="!sideLoading" :defaultSelectedKeys="selectedJobDepartment">
-                    <a-menu-item :key="job.id" v-for="(job, index) in dropdowns.job_departments" @click="selectedJobDepartment = [job.id]" :title="job.name">
-                        {{ job.name }}
-                    </a-menu-item>
-                </a-menu>
-            </a-col>
-            <a-col :xs="24" :sm="12" :md="18">
-                <div class="mr-15" v-if="contentLoading">
-                    <a-skeleton active :paragraph="false" v-for="index in 10" :key="index"></a-skeleton>
-                </div>
-                <a-row  v-if="!contentLoading" :gutter="16">
-                    <div>
-                        <a-col :md="24">
-                            <h1>{{title}}</h1>
-                        </a-col>
-                    </div>
-                    <a-col :xs="24" :sm="24" :md="12" class="mb-15" v-for="(job, index) in dropdowns.jobs" :key="index">
-                        <a-card size="small" :title="null" class="custom-card">
-                            <div class="body">
-                                <p> {{job.title}} </p>
-                                <p> Company: {{job.company}} </p>
-                                <div class="text-right">
-                                    <a-tag v-for="(el, elIndex) in job.experience_levels" :key="elIndex">{{el.title}}</a-tag>
-                                </div>
-                            </div>
-                            <span class="apply-button mt-10">
-                                <a-row>
-                                    <a-col :sm="12" class="text-left">
-                                        <a @click="handleDetailClick(job.id)">Apply</a>
-                                    </a-col>
-                                    <a-col :sm="12" class="text-right">
-                                        Vacancies: {{job.open_vacancies}}
-                                    </a-col>
-                                </a-row>
-                            </span>
-                        </a-card>
-                    </a-col>
-                    <a-col :xs="24" :sm="24" :md="12" class="mb-15" v-if="dropdowns.jobs.length <= 0">
-                        No data available!
-                    </a-col>
-                </a-row>
-            </a-col>
-        </a-row>
+    <div class="public-jobs-page">
+        <section class="public-hero-section">
+            <div class="container">
+                <b-row class="align-items-center">
+                    <b-col cols="12" lg="7">
+                        <span class="public-hero-badge">
+                            <i class="bi bi-stars mr-5"></i>
+                            Hiring Portal
+                        </span>
+                        <h1>{{title || 'Find your next opportunity'}}</h1>
+                        <p>Explore open roles, review basic job details, and apply with your uploaded document.</p>
+                    </b-col>
+                    <b-col cols="12" lg="5" class="mt-20 mt-lg-0">
+                        <div class="public-hero-card">
+                            <span>Open Jobs</span>
+                            <strong>{{ activeJobsCount }}</strong>
+                            <p>{{ activeDepartmentName }}</p>
+                        </div>
+                    </b-col>
+                </b-row>
+            </div>
+        </section>
 
-        <a-drawer
-            width="800"
+        <section class="public-job-section">
+            <div class="container">
+                <b-row>
+                    <b-col cols="12">
+                        <div class="public-section-header">
+                            <div>
+                                <h2>Open Positions</h2>
+                                <p>Select a department and choose the role you want to apply for.</p>
+                            </div>
+                        </div>
+                    </b-col>
+                </b-row>
+
+                <div class="public-department-list" v-if="sideLoading">
+                    <b-skeleton v-for="index in 5" :key="index" width="130px" height="38px"></b-skeleton>
+                </div>
+
+                <div class="public-department-list" v-if="!sideLoading">
+                    <button
+                        type="button"
+                        class="public-department-pill"
+                        :class="{ active: selectedJobDepartment && selectedJobDepartment.includes(job.id) }"
+                        :key="job.id"
+                        v-for="job in dropdowns.job_departments"
+                        @click="selectJobDepartment(job.id)"
+                        :title="job.name"
+                    >
+                        {{ job.name }}
+                    </button>
+                </div>
+
+                <b-row v-if="contentLoading">
+                    <b-col cols="12" md="6" lg="4" class="mb-20" v-for="index in 6" :key="index">
+                        <b-card class="public-job-card">
+                            <b-skeleton height="22px"></b-skeleton>
+                            <b-skeleton width="70%" class="mt-3"></b-skeleton>
+                            <b-skeleton width="45%" class="mt-4"></b-skeleton>
+                        </b-card>
+                    </b-col>
+                </b-row>
+
+                <b-row v-if="!contentLoading && dropdowns.jobs.length">
+                    <b-col cols="12" md="6" lg="4" class="mb-20" v-for="job in dropdowns.jobs" :key="job.id">
+                        <b-card class="public-job-card">
+                            <div class="public-job-card-header">
+                                <span class="public-company-name">{{job.company || 'Company'}}</span>
+                                <span class="job-vacancy-pill">{{job.open_vacancies || 0}} Open</span>
+                            </div>
+
+                            <h3>{{job.title}}</h3>
+
+                            <div class="public-job-tags">
+                                <b-badge
+                                    class="public-job-tag"
+                                    v-for="(el, elIndex) in job.experience_levels"
+                                    :key="elIndex"
+                                >
+                                    {{el.title}}
+                                </b-badge>
+                            </div>
+
+                            <b-button variant="primary" block class="public-apply-button" @click="handleDetailClick(job.id)">
+                                View & Apply
+                            </b-button>
+                        </b-card>
+                    </b-col>
+                </b-row>
+
+                <div class="public-empty-state" v-if="!contentLoading && dropdowns.jobs.length <= 0">
+                    <i class="bi bi-briefcase"></i>
+                    <h3>No jobs available</h3>
+                    <p>Please check another department or come back later.</p>
+                </div>
+            </div>
+        </section>
+
+        <b-sidebar
+            width="800px"
             title="Job Detail"
-            placement="right"
-            :closable="false"
-            @close="handleJobDetailClose"
-            :visible="openDetailedJob"
-            :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto', paddingBottom: '108px'}"
+            right
+            shadow
+            backdrop
+            no-header-close
+            sidebar-class="job-detail-sidebar"
+            body-class="job-detail-sidebar-body"
+            v-model="openDetailedJob"
+            @hidden="handleJobDetailClose"
         >
             <template v-if="selectedJob && selectedJob.title">
-                <a-row :gutter="16">
-                    <a-col :xs="24" :sm="16" :lg="16">
-                        <a-form-item :validate-status="(formErrors.has('user_document_id') ? 'error' : '')"
-                                     :help="formErrors.first('user_document_id')" class="mb-0">
-                            <a-select placeholder="Select Document" allowClear v-model="formFields.user_document_id"
-                                      :dropdownMatchSelectWidth="false" style="width: 100%">
-                                <a-select-option v-for="(user_document, index) in dropdowns.user_documents" :key="index" :value="user_document.id">
-                                    {{user_document.label}}
-                                </a-select-option>
-                            </a-select>
-                        </a-form-item>
-                    </a-col>
-                    <a-col :xs="24" :sm="8" :lg="8">
-                        <a-button
-                            type="primary"
-                            class="mr-5" block
-                            @click="handleApplyEvent(selectedJob.id)">
-                            Apply
-                        </a-button>
-                    </a-col>
-                </a-row>
-                <div class="div-saperator"/>
-                <h2>{{selectedJob.title}}</h2>
-                <h4>
-                    <strong>About job:</strong>
-                </h4>
-                <div v-html="selectedJob.job_description"></div>
-                <br>
-                <h4>
-                    <strong>About {{selectedJob.company}}</strong>
-                </h4>
-                <div v-html="selectedJob.company_description"></div>
-                <div v-if="selectedJob.qualifications.length > 0">
-                    <div class="div-saperator"/>
-                    <h4><strong>Preferred Qualifications:</strong></h4>
-                    <div>
-                        {{selectedJob.qualifications.map((item) => item.title).join(', ')}}
+                <div class="job-detail-content">
+                    <div class="job-detail-hero">
+                        <span class="public-company-name">{{selectedJob.company || 'Company'}}</span>
+                        <h2>{{selectedJob.title}}</h2>
+                        <span class="job-vacancy-pill" v-if="selectedJob.open_vacancies">
+                            {{selectedJob.open_vacancies}} Open
+                        </span>
                     </div>
-                </div>
-                <div v-if="selectedJob.experience_levels.length > 0">
-                    <div class="div-saperator"/>
-                    <h4><strong>Experience Levels:</strong></h4>
-                    <div>
-                        {{selectedJob.experience_levels.map((item) => item.title).join(', ')}}
+
+                    <div class="job-detail-apply-box">
+                        <b-row>
+                            <b-col cols="12" md="8">
+                                <b-form-group label="Select Document" class="mb-15 mb-md-0">
+                                    <v-select
+                                        v-model="formFields.user_document_id"
+                                        :options="dropdowns.user_documents"
+                                        label="label"
+                                        :reduce="document => document.id"
+                                        :class="{ 'is-invalid': formErrors.has('user_document_id') }"
+                                        placeholder="Select Document"
+                                    ></v-select>
+                                    <div class="invalid-feedback d-block" v-if="formErrors.has('user_document_id')">
+                                        {{formErrors.first('user_document_id')}}
+                                    </div>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="4">
+                                <b-button
+                                    variant="primary"
+                                    block
+                                    class="job-detail-apply-button"
+                                    :disabled="isSubmitting"
+                                    @click="handleApplyEvent(selectedJob.id)">
+                                    {{ isSubmitting ? 'Applying...' : 'Apply Now' }}
+                                </b-button>
+                            </b-col>
+                        </b-row>
+                    </div>
+
+                    <div class="job-detail-section">
+                        <h4>About Job</h4>
+                        <div class="job-detail-text" v-html="selectedJob.job_description || '-'"></div>
+                    </div>
+
+                    <div class="job-detail-section">
+                        <h4>About {{selectedJob.company || 'Company'}}</h4>
+                        <div class="job-detail-text" v-html="selectedJob.company_description || '-'"></div>
+                    </div>
+
+                    <div class="job-detail-section" v-if="selectedJob.qualifications && selectedJob.qualifications.length > 0">
+                        <h4>Preferred Qualifications</h4>
+                        <div class="job-detail-chip-list">
+                            <span class="job-detail-chip" v-for="item in selectedJob.qualifications" :key="item.id || item.title">
+                                {{item.title}}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="job-detail-section" v-if="selectedJob.experience_levels && selectedJob.experience_levels.length > 0">
+                        <h4>Experience Levels</h4>
+                        <div class="job-detail-chip-list">
+                            <span class="job-detail-chip" v-for="item in selectedJob.experience_levels" :key="item.id || item.title">
+                                {{item.title}}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </template>
-        </a-drawer>
+        </b-sidebar>
     </div>
 </template>
 <script>
@@ -149,10 +222,12 @@
             this.title = this.settings.home_page_title;
         },
         methods: {
+            selectJobDepartment(id) {
+                this.selectedJobDepartment = [id];
+            },
             handleDetailClick(id) {
-                this.selectedJob = this.dropdowns.jobs.filter((item) => item.id === id);
+                this.selectedJob = this.dropdowns.jobs.find((item) => item.id === id);
                 if(this.selectedJob) {
-                    this.selectedJob = this.selectedJob[0];
                     this.openDetailedJob = true;
                     if (Object.keys(USER).length <= 0) {
                         return this.$router.push({name: 'login'});
@@ -213,7 +288,7 @@
                 })
                     .then((response) => {
                         const {data} = response;
-                        this.dropdowns.job_departments = data;
+                        this.dropdowns.job_departments = data || [];
                         if(data && data.length > 0) {
                             this.selectedJobDepartment = data ? [data[0].id] : null;
                         }
@@ -279,7 +354,21 @@
         computed: {
             ...mapFields([
                 'settings'
-            ])
+            ]),
+            activeJobsCount() {
+                return this.dropdowns.jobs.length;
+            },
+            activeDepartmentName() {
+                if (!this.selectedJobDepartment) {
+                    return 'Select a department';
+                }
+
+                const department = this.dropdowns.job_departments.find((item) => {
+                    return item.id === this.selectedJobDepartment[0];
+                });
+
+                return department ? department.name : 'Selected Department';
+            }
         }
     }
 </script>

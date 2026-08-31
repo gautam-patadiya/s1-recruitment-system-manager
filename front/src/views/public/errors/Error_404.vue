@@ -3,7 +3,7 @@
         <div class="mt-50">
             <h1 class="error-text mb-0 text-white">404</h1>
             <h1 class="text-white">Whoops! You are on wrong page.</h1>
-            <router-link :to="{name: 'home'}" class="text-center ant-btn ant-btn-default ant-btn-background-ghost">Go To Home</router-link>
+            <b-button :to="{name: 'home'}" variant="outline-light" class="text-center">Go To Home</b-button>
         </div>
     </div>
 </template>

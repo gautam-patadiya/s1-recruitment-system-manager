@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import './ant.js';
+import './bootstrap.js';
 import App from './App.vue';
 import router from './router';
 import Private from "./layouts/Private";
@@ -40,5 +40,5 @@ axios
     })
     .catch((errors) => {
         alert('Unable to load Setting file :( ');
-        thisFunctionDoesNotExistAndWasCreatedWithTheOnlyPurposeOfStopJavascriptExecutionOfAllTypesIncludingCatchAndAnyArbitraryWeirdScenario();
+        console.error(errors);
     });

@@ -1,50 +1,83 @@
 <template>
-    <div class="public-box-container">
-        <div class="box pt-0 text-center">
-            <h1 class="mb-0 text-white">Reset <strong>Password</strong></h1>
-            <h4 class="text-white">Set new password</h4>
-        </div>
+    <div class="auth-page">
+        <b-row class="auth-shell no-gutters">
+            <b-col cols="12" lg="4" class="auth-left-panel">
+                <div class="auth-brand">
+                    <span>ATS</span>
+                    <strong>Recruitment Manager</strong>
+                </div>
+                <h1>Reset Password</h1>
+                <p>Create a new password to get back into your recruitment workspace.</p>
+                <div class="auth-feature-list">
+                    <span><i class="bi bi-check-circle mr-5"></i>Use a strong password</span>
+                    <span><i class="bi bi-check-circle mr-5"></i>Confirm before saving</span>
+                    <span><i class="bi bi-check-circle mr-5"></i>Login after reset</span>
+                </div>
+            </b-col>
 
-        <div class="public-box back-white mt-40">
-            <h2>Enter Details</h2>
+            <b-col cols="12" lg="8" class="auth-form-panel">
+                <div class="auth-form-card">
+                    <div class="auth-form-header">
+                        <div class="auth-card-brand">
+                            <span>ATS</span>
+                            <strong>Recruitment Manager</strong>
+                        </div>
+                        <h2>Set New Password</h2>
+                        <p>Enter your email and new password details.</p>
+                    </div>
+
             <form @submit.prevent="submit" autocomplete="off">
                 <div>
-                    <a-form-item class="mb-10 required-input"
-                     :validate-status="(formErrors.has('email') ? 'error' : '')"
-                     :help="formErrors.first('email')">
-                        <a-input placeholder="Email" v-model="formFields.email">
-                            <a-icon  size="large" slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item class="mb-10 required-input"
-                     :validate-status="(formErrors.has('password') ? 'error' : '')"
-                     :help="formErrors.first('password')">
-                        <a-input placeholder="Password" v-model="formFields.password" type="password">
-                            <a-icon  size="large" slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item class="mb-10 required-input"
-                     :validate-status="(formErrors.has('password_confirmation') ? 'error' : '')"
-                     :help="formErrors.first('password_confirmation')">
-                        <a-input placeholder="Confirm Password" v-model="formFields.password_confirmation" type="password">
-                            <a-icon size="large" slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item>
-                        <a-row>
-                            <a-col span="12" class="mt-10">
-                                <a-button size="large" type="primary" html-type="submit" class="login-form-button">
-                                    <span class="pl-10 pr-10">Submit</span>
-                                </a-button>
-                            </a-col>
-                            <a-col span="12" class="text-right mt-10">
-                                <router-link class="login-form-forgot" :to="{name: 'login'}">Back to Login</router-link>
-                            </a-col>
-                        </a-row>
-                    </a-form-item>
+                    <b-form-group
+                        label="Email *"
+                        class="mb-15 required-input"
+                        :state="formErrors.has('email') ? false : null"
+                        :invalid-feedback="formErrors.first('email')"
+                    >
+                        <b-form-input
+                            placeholder="you@example.com"
+                            v-model="formFields.email"
+                            :state="formErrors.has('email') ? false : null"
+                        ></b-form-input>
+                    </b-form-group>
+                    <b-form-group
+                        label="Password *"
+                        class="mb-15 required-input"
+                        :state="formErrors.has('password') ? false : null"
+                        :invalid-feedback="formErrors.first('password')"
+                    >
+                        <b-form-input
+                            placeholder="Password"
+                            v-model="formFields.password"
+                            type="password"
+                            :state="formErrors.has('password') ? false : null"
+                        ></b-form-input>
+                    </b-form-group>
+                    <b-form-group
+                        label="Confirm Password *"
+                        class="mb-15 required-input"
+                        :state="formErrors.has('password_confirmation') ? false : null"
+                        :invalid-feedback="formErrors.first('password_confirmation')"
+                    >
+                        <b-form-input
+                            placeholder="Confirm Password"
+                            v-model="formFields.password_confirmation"
+                            type="password"
+                            :state="formErrors.has('password_confirmation') ? false : null"
+                        ></b-form-input>
+                    </b-form-group>
+                    <b-button size="lg" variant="primary" block type="submit" class="auth-submit-button" :disabled="isSubmitted">
+                        {{ isSubmitted ? 'Updating...' : 'Reset Password' }}
+                    </b-button>
+                    <p class="auth-bottom-text">
+                        Already reset?
+                        <router-link class="auth-link" :to="{name: 'login'}">Back to Login</router-link>
+                    </p>
                 </div>
             </form>
-        </div>
+                </div>
+            </b-col>
+        </b-row>
     </div>
 </template>
 <script>

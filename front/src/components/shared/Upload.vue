@@ -1,29 +1,47 @@
 <template>
-    <a-row :gutter="16" class="pl-5 pr-5">
-        <a-col :xs="24" :sm="8" :md="8">
-            <a-form-item :validate-status="(formErrors.has('document_type') ? 'error' : '')"
-                         :help="formErrors.first('document_type')">
-                <a-select placeholder="Select Document Type" allowClear v-model="document_type"
-                          :dropdownMatchSelectWidth="false" style="width: 100%">
-                    <a-select-option v-for="(document_type, index) in dropdowns.document_types" :key="index"
-                                     :value="document_type.id">
-                        {{document_type.label}}
-                    </a-select-option>
-                </a-select>
-            </a-form-item>
-        </a-col>
-        <a-col :xs="24" :sm="14" :md="14">
-            <a-form-item :validate-status="(formErrors.has('file') ? 'error' : '')" :help="formErrors.first('file')">
-                <input type="file" name="file" class="ant-input" ref="file">
-            </a-form-item>
-        </a-col>
-        <a-col :xs="12" :sm="2" :md="2">
-            <a-button type="default" block @click="handleUpload()" :loading="uploading" :disabled="uploading"
-                      title="Upload">
-                <a-icon type="upload"/>
-            </a-button>
-        </a-col>
-    </a-row>
+    <b-row class="pl-5 pr-5">
+        <b-col cols="12" sm="4" md="4">
+            <b-form-group>
+                <v-select
+                    v-model="document_type"
+                    :options="dropdowns.document_types"
+                    label="label"
+                    :reduce="documentType => documentType.id"
+                    :class="{ 'is-invalid': formErrors.has('document_type') }"
+                    placeholder="Select Document Type"
+                ></v-select>
+                <div class="invalid-feedback d-block" v-if="formErrors.has('document_type')">
+                    {{formErrors.first('document_type')}}
+                </div>
+            </b-form-group>
+        </b-col>
+        <b-col cols="12" sm="7" md="7">
+            <b-form-group>
+                <input
+                    type="file"
+                    name="file"
+                    class="form-control-file"
+                    :class="{ 'is-invalid': formErrors.has('file') }"
+                    ref="file"
+                >
+                <div class="invalid-feedback d-block" v-if="formErrors.has('file')">
+                    {{formErrors.first('file')}}
+                </div>
+            </b-form-group>
+        </b-col>
+        <b-col cols="6" sm="1" md="1">
+            <b-button
+                variant="outline-secondary"
+                block
+                @click="handleUpload()"
+                :disabled="uploading"
+                title="Upload"
+            >
+                <b-spinner v-if="uploading" small></b-spinner>
+                <i v-else class="bi bi-upload"></i>
+            </b-button>
+        </b-col>
+    </b-row>
 </template>
 <script>
     import {handleServerError, hasAuthUser} from "../../util/utils";

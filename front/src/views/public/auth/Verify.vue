@@ -5,16 +5,16 @@
         </div>
         <div class="public-box back-white mt-40">
             <div class="text-center mb-40">
-                <a-icon v-if="isSubmitted" type="loading" class="loading-icon" />
-                <a-icon v-if="status === 1" type="check-circle" class="loading-icon success" />
-                <a-icon v-if="status === 0" type="close-circle" class="loading-icon danger" />
+                <b-spinner v-if="isSubmitted" class="loading-icon" label="Loading"></b-spinner>
+                <b-icon v-if="status === 1" icon="check-circle" class="loading-icon success"></b-icon>
+                <b-icon v-if="status === 0" icon="x-circle" class="loading-icon danger"></b-icon>
             </div>
 
-            <a-row>
-                <a-col span="24" class="text-right mt-10">
+            <b-row>
+                <b-col cols="12" class="text-right mt-10">
                     <router-link class="login-form-forgot" :to="{name: 'login'}">Login</router-link>
-                </a-col>
-            </a-row>
+                </b-col>
+            </b-row>
         </div>
     </div>
 </template>

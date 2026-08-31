@@ -1,71 +1,79 @@
-import {notification} from 'ant-design-vue';
+import toastBus from './toastBus';
 
-export const loginSuccess = () => notification['success']({ message: 'Welcome! Login Success', description: '' });
-export const loginFailed = () => notification['error']({ message: 'Login failed! Make sure email verified.', description: '' });
-export const registerSuccess = () => notification['success']({ message: 'Congratulations! Register Success.', description: 'Verify Email! So can login.' });
-export const registerFailed = () => notification['error']({ message: 'Registration failed!', description: '' });
+function showToast(variant, title, message = '') {
+    toastBus.$emit('show-toast', {
+        title: title,
+        message: message,
+        variant: variant,
+    });
+}
 
-export const sessionExpires = () => notification['error']({ message: 'Session expired!', description: '' });
-export const serverError = () => notification['error']({ message: 'Whoops! Server Error!', description: 'Please refresh the page and try again!' });
-export const forgotPasswordSuccess = () => notification['info']({ message: 'Check inbox! We have sent you email.', description: '' });
-export const resetPasswordSuccess = () => notification['info']({ message: 'Congratulations! Reset password successful.', description: '' });
+export const loginSuccess = () => showToast('success', 'Welcome! Login Success');
+export const loginFailed = () => showToast('danger', 'Login failed! Make sure email verified.');
+export const registerSuccess = () => showToast('success', 'Congratulations! Register Success.', 'Verify Email! So can login.');
+export const registerFailed = () => showToast('danger', 'Registration failed!');
 
-export const userCreated = () => notification['success']({ message: 'User Added!', description: '' });
-export const userUpdated = () => notification['info']({ message: 'User Updated!', description: '' });
-export const userDeleted = () => notification['warning']({ message: 'User Deleted!', description: '' });
+export const sessionExpires = () => showToast('danger', 'Session expired!');
+export const serverError = () => showToast('danger', 'Whoops! Server Error!', 'Please refresh the page and try again!');
+export const forgotPasswordSuccess = () => showToast('info', 'Check inbox! We have sent you email.');
+export const resetPasswordSuccess = () => showToast('info', 'Congratulations! Reset password successful.');
 
-export const experienceLevelCreated = () => notification['success']({ message: 'Experience Level Added!', description: '' });
-export const experienceLevelUpdated = () => notification['info']({ message: 'Experience Level Updated!', description: '' });
-export const experienceLevelDeleted = () => notification['warning']({ message: 'Experience Level Deleted!', description: '' });
+export const userCreated = () => showToast('success', 'User Added!');
+export const userUpdated = () => showToast('info', 'User Updated!');
+export const userDeleted = () => showToast('warning', 'User Deleted!');
 
-export const qualificationCreated = () => notification['success']({ message: 'Qualification Added!', description: '' });
-export const qualificationUpdated = () => notification['info']({ message: 'Qualification Updated!', description: '' });
-export const qualificationDeleted = () => notification['warning']({ message: 'Qualification Deleted!', description: '' });
+export const experienceLevelCreated = () => showToast('success', 'Experience Level Added!');
+export const experienceLevelUpdated = () => showToast('info', 'Experience Level Updated!');
+export const experienceLevelDeleted = () => showToast('warning', 'Experience Level Deleted!');
 
-export const interviewStageCreated = () => notification['success']({ message: 'Interview Stage Added!', description: '' });
-export const interviewStageUpdated = () => notification['info']({ message: 'Interview Stage Updated!', description: '' });
-export const interviewStageDeleted = () => notification['warning']({ message: 'Interview Stage Deleted!', description: '' });
+export const qualificationCreated = () => showToast('success', 'Qualification Added!');
+export const qualificationUpdated = () => showToast('info', 'Qualification Updated!');
+export const qualificationDeleted = () => showToast('warning', 'Qualification Deleted!');
 
-export const jobDepartmentCreated = () => notification['success']({ message: 'Job Department Added!', description: '' });
-export const jobDepartmentUpdated = () => notification['info']({ message: 'Job Department Updated!', description: '' });
-export const jobDepartmentDeleted = () => notification['warning']({ message: 'Job Department Deleted!', description: '' });
+export const interviewStageCreated = () => showToast('success', 'Interview Stage Added!');
+export const interviewStageUpdated = () => showToast('info', 'Interview Stage Updated!');
+export const interviewStageDeleted = () => showToast('warning', 'Interview Stage Deleted!');
 
-export const verifyEmailSuccess = () => notification['info']({ message: 'Congratulations! Email Verification Success', description: '' });
-export const verifyEmailFailed = () => notification['error']({ message: 'Whoops! Looks like token mismatch.', description: '' });
+export const jobDepartmentCreated = () => showToast('success', 'Job Department Added!');
+export const jobDepartmentUpdated = () => showToast('info', 'Job Department Updated!');
+export const jobDepartmentDeleted = () => showToast('warning', 'Job Department Deleted!');
 
-export const jobApplySuccess = () => notification['info']({ message: 'Congratulations! You have applied for a job.', description: '' });
-export const jobApplyFailed = () => notification['error']({ message: 'Whoops! Looks like fields mismatch.', description: '' });
-export const jobApplyAlready = () => notification['info']({ message: 'Whoops! Looks like You already applied.', description: '' });
+export const verifyEmailSuccess = () => showToast('info', 'Congratulations! Email Verification Success');
+export const verifyEmailFailed = () => showToast('danger', 'Whoops! Looks like token mismatch.');
 
-export const profileUpdated = () => notification['info']({ message: 'Profile update successful.', description: '' });
+export const jobApplySuccess = () => showToast('info', 'Congratulations! You have applied for a job.');
+export const jobApplyFailed = () => showToast('danger', 'Whoops! Looks like fields mismatch.');
+export const jobApplyAlready = () => showToast('info', 'Whoops! Looks like You already applied.');
 
-export const jobCreated = () => notification['success']({ message: 'Job Added!', description: '' });
-export const jobUpdated = () => notification['info']({ message: 'Job Updated!', description: '' });
-export const jobDeleted = () => notification['warning']({ message: 'Job Deleted!', description: '' });
-export const jobArchived = () => notification['warning']({ message: 'Job Archived!', description: '' });
+export const profileUpdated = () => showToast('info', 'Profile update successful.');
 
-export const jobApplicationCreated = () => notification['success']({ message: 'Job Application Added!', description: '' });
-export const jobApplicationUpdated = () => notification['info']({ message: 'Job Application Updated!', description: '' });
+export const jobCreated = () => showToast('success', 'Job Added!');
+export const jobUpdated = () => showToast('info', 'Job Updated!');
+export const jobDeleted = () => showToast('warning', 'Job Deleted!');
+export const jobArchived = () => showToast('warning', 'Job Archived!');
 
-export const interviewCreated = () => notification['success']({ message: 'Interview Added!', description: '' });
-export const interviewUpdated = () => notification['info']({ message: 'Interview Updated!', description: '' });
-export const interviewDeleted = () => notification['warning']({ message: 'Interview Deleted!', description: '' });
+export const jobApplicationCreated = () => showToast('success', 'Job Application Added!');
+export const jobApplicationUpdated = () => showToast('info', 'Job Application Updated!');
 
-export const documentTypeCreated = () => notification['success']({ message: 'Document Type Added!', description: '' });
-export const documentTypeUpdated = () => notification['info']({ message: 'Document Type Updated!', description: '' });
-export const documentTypeDeleted = () => notification['warning']({ message: 'Document Type Deleted!', description: '' });
+export const interviewCreated = () => showToast('success', 'Interview Added!');
+export const interviewUpdated = () => showToast('info', 'Interview Updated!');
+export const interviewDeleted = () => showToast('warning', 'Interview Deleted!');
 
-export const moreThenOneUploadNotAllowed = () => notification['warning']({ message: 'Multiple upload not allowed!', description: '' });
-export const uploadSizeValidation = (size = 2) => notification['warning']({ message: 'The file size should be less then or equal '+size+' MB.', description: '' });
-export const uploadSuccess = () => notification['success']({ message: 'The file successfully uploaded.', description: '' });
-export const documentDeleted = () => notification['warning']({ message: 'Document Deleted.', description: '' });
+export const documentTypeCreated = () => showToast('success', 'Document Type Added!');
+export const documentTypeUpdated = () => showToast('info', 'Document Type Updated!');
+export const documentTypeDeleted = () => showToast('warning', 'Document Type Deleted!');
 
-export const settingUpdated = () => notification['warning']({ message: 'Setting Update Success.', description: '' });
-export const unknownError = () => notification['error']({ message: 'Whoops! Look like something went wrong. Try again.', description: '' });
-export const deleteDependent = () => notification['info']({ message: "You can't delete this record. It's connected with other module.", description: '' });
+export const moreThenOneUploadNotAllowed = () => showToast('warning', 'Multiple upload not allowed!');
+export const uploadSizeValidation = (size = 2) => showToast('warning', 'The file size should be less then or equal ' + size + ' MB.');
+export const uploadSuccess = () => showToast('success', 'The file successfully uploaded.');
+export const documentDeleted = () => showToast('warning', 'Document Deleted.');
 
-export const companyCreated = () => notification['success']({ message: 'Company Added!', description: '' });
-export const companyUpdated = () => notification['info']({ message: 'Company Updated!', description: '' });
-export const companyDeleted = () => notification['warning']({ message: 'Company Deleted!', description: '' });
+export const settingUpdated = () => showToast('warning', 'Setting Update Success.');
+export const unknownError = () => showToast('danger', 'Whoops! Look like something went wrong. Try again.');
+export const deleteDependent = () => showToast('info', "You can't delete this record. It's connected with other module.");
 
-export const unableToLoadSettings = () => notification['error']({ message: 'Whoops! Not able to load Settings.', description: '' });
+export const companyCreated = () => showToast('success', 'Company Added!');
+export const companyUpdated = () => showToast('info', 'Company Updated!');
+export const companyDeleted = () => showToast('warning', 'Company Deleted!');
+
+export const unableToLoadSettings = () => showToast('danger', 'Whoops! Not able to load Settings.');

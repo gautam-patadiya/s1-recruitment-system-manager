@@ -1,8 +1,8 @@
 <template>
     <div class="container">
-        <a-row class="back-gray-2 wrapper">
+        <b-row class="back-gray-2 wrapper">
             <div v-html="content"></div>
-        </a-row>
+        </b-row>
     </div>
 </template>
 <script>

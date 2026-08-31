@@ -1,80 +1,104 @@
 <template>
-    <a-row>
-        <a-col span="24">
-            <div>
-                <a-row>
-                    <a-col :xs="24" :sm="24" :md="12">
-                        <h2 class="mb-0">
-                            System<strong> Settings</strong>
-                        </h2>
-                    </a-col>
-                </a-row>
-            </div>
+    <b-row>
+        <b-col cols="12">
+            <b-row class="align-items-center job-header-simple">
+                <b-col cols="12" md="7">
+                    <h2 class="job-header-title">
+                        System Settings
+                    </h2>
+                </b-col>
+
+                <b-col cols="12" md="5" class="text-md-right mt-15 mt-md-0">
+                    <b-button variant="primary" type="submit" form="settings-form" :disabled="loading">
+                        <i class="bi bi-check-circle mr-5"></i>
+                        {{ loading ? 'Updating...' : 'Update Settings' }}
+                    </b-button>
+                </b-col>
+            </b-row>
             <div class="mt-20">
-                <form @submit.prevent="handleFormSubmit" autocomplete="off">
-                    <a-row :gutter="16">
-                        <a-col :xs="24" :sm="12" :md="12">
-                            <a-form-item label="Application Name" class="mb-10" help="Will appear in title">
-                                <a-input type="text" v-model="formFields.items.app_name"/>
-                            </a-form-item>
-                        </a-col>
-                        <a-col :xs="24" :sm="12" :md="12">
-                            <a-form-item label="Application URL" class="mb-10" help="Ex. exampledomain.com API URL will be exampledomain.com/api">
-                                <a-input type="url" v-model="formFields.items.app_url" placeholder="Ex. AP-"/>
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
+                <form id="settings-form" @submit.prevent="handleFormSubmit" autocomplete="off">
+                    <b-card class="settings-card mb-20">
+                        <h5 class="settings-section-title">Application Details</h5>
 
-                    <a-row :gutter="16">
-                        <a-col :xs="24" :sm="12" :md="12">
-                            <a-form-item label="Logo Text Part One" class="mb-10">
-                                <a-input type="text" v-model="formFields.items.text_logo_part_one" placeholder="Ex. John"/>
-                            </a-form-item>
-                        </a-col>
-                        <a-col :xs="24" :sm="12" :md="12">
-                            <a-form-item label="Logo Text Part Two" class="mb-10">
-                                <a-input type="text" v-model="formFields.items.text_logo_part_two" placeholder="Ex. Doe"/>
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
+                        <b-row>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Application Name" class="mb-15" description="This name will appear in the browser title.">
+                                    <b-form-input type="text" v-model="formFields.items.app_name"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Application URL" class="mb-15" description="Example: https://example.com">
+                                    <b-form-input type="url" v-model="formFields.items.app_url"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
 
-                    <a-row :gutter="16">
-                        <a-col :xs="24" :sm="12" :md="12">
-                            <a-form-item label="Home page title" class="mb-10">
-                                <a-input type="text" v-model="formFields.items.home_page_title"/>
-                            </a-form-item>
-                        </a-col>
-                        <a-col :xs="24" :sm="12" :md="12">
-                            <a-form-item label="Job Application Number Prefix" class="mb-10">
-                                <a-input type="text" v-model="formFields.items.job_application_number_prefix" placeholder="Ex. AP-"/>
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
+                        <b-row>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Home Page Title" class="mb-15">
+                                    <b-form-input type="text" v-model="formFields.items.home_page_title"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Job Application Number Prefix" class="mb-15">
+                                    <b-form-input type="text" v-model="formFields.items.job_application_number_prefix" placeholder="Ex. AP-"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
+                    </b-card>
 
-                    <a-row :gutter="16">
-                        <a-col :xs="24" :sm="12" :md="12" class="control-line-height">
-                            <a-form-item label="About Us" class="mb-10">
-                                <editor
-                                    props-tool-bar="2"
-                                    props-upload-url="/document/uploads/miscellaneous"
-                                    :props-content.sync="formFields.items.about_us_content"></editor>
-                            </a-form-item>
-                        </a-col>
-                        <a-col :xs="24" :sm="12" :md="12" class="control-line-height">
-                            <a-form-item label="User have to verify email after register"  class="mb-10">
-                                <a-checkbox :checked="formFields.items.user_has_to_verify_email_after_register" v-model="formFields.items.user_has_to_verify_email_after_register">
-                                    Yes
-                                </a-checkbox>
-                            </a-form-item>
-                        </a-col>
-                    </a-row>
-                    <div class="mt-5">
-                        <a-button type="primary" html-type="submit" class="mr-5">Update</a-button>
+                    <b-card class="settings-card mb-20">
+                        <h5 class="settings-section-title">Branding</h5>
+
+                        <b-row>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Logo Text Part One" class="mb-15">
+                                    <b-form-input type="text" v-model="formFields.items.text_logo_part_one" placeholder="Ex. Satt"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Logo Text Part Two" class="mb-15">
+                                    <b-form-input type="text" v-model="formFields.items.text_logo_part_two" placeholder="Ex. Viki"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
+                    </b-card>
+
+                    <b-card class="settings-card mb-20">
+                        <h5 class="settings-section-title">Content</h5>
+
+                        <b-row>
+                            <b-col cols="12" class="control-line-height">
+                                <b-form-group label="About Us" class="mb-15">
+                                    <editor
+                                        props-tool-bar="2"
+                                        props-upload-url="/document/uploads/miscellaneous"
+                                        :props-content.sync="formFields.items.about_us_content"></editor>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
+                    </b-card>
+
+                    <b-card class="settings-card">
+                        <h5 class="settings-section-title">Registration</h5>
+
+                        <b-form-group label="User has to verify email after register" class="mb-0">
+                            <b-form-checkbox v-model="formFields.items.user_has_to_verify_email_after_register">
+                                Yes, require email verification
+                            </b-form-checkbox>
+                        </b-form-group>
+                    </b-card>
+
+                    <div class="settings-footer text-right mt-20">
+                        <b-button variant="primary" type="submit" :disabled="loading">
+                            <i class="bi bi-check-circle mr-5"></i>
+                            {{ loading ? 'Updating...' : 'Update Settings' }}
+                        </b-button>
                     </div>
                 </form>
             </div>
-        </a-col>
-    </a-row>
+        </b-col>
+    </b-row>
 </template>
 <script>
     import {request} from "../../util/request";
@@ -124,6 +148,9 @@
         },
         methods: {
             handleFormSubmit() {
+                this.loading = true;
+                this.formErrors = new Error({});
+
                 request({
                     method: "post",
                     url: 'settings',
@@ -142,7 +169,8 @@
                     }
 
                     handleServerError(errors);
-                });
+                })
+                .finally(() => this.loading = false);
             },
         },
         computed: {
@@ -153,8 +181,28 @@
     }
 </script>
 <style lang="scss">
+    .settings-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .settings-section-title {
+        color: #0f172a;
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    .settings-footer {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 16px;
+    }
+
     .control-line-height{
-        .ant-form-item-control{
+        .form-group{
             line-height: 25px;
         }
     }

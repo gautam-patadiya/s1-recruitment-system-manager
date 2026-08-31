@@ -1,14 +1,13 @@
 <template>
-    <a-layout id="public-wrapper">
+    <div id="public-wrapper">
         <slot></slot>
-    </a-layout>
+    </div>
 </template>
+
 <script>
     export default {
         data() {
-            return {
-
-            };
+            return {};
         }
     }
 </script>

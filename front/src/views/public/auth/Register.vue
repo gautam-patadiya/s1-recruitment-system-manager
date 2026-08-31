@@ -1,83 +1,86 @@
 <template>
-    <div class="public-box-container">
-        <div class="box pt-0 text-center">
-            <h1 class="mb-0 text-white">Welcome to <strong>Registrations</strong></h1>
-            <h4 class="text-white">Let's create your account</h4>
-        </div>
-
-        <div class="public-box back-white mt-40">
-            <h2>Enter Details</h2>
-            <form @submit.prevent="submit" autocomplete="off">
-                <div>
-                    <a-form-item class="mb-10 required-input"
-                     :validate-status="(formErrors.has('first_name') ? 'error' : '')"
-                     :help="formErrors.first('first_name')">
-                        <a-input placeholder="First Name" v-model="formFields.first_name">
-                            <a-icon  size="large" slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item class="mb-10 required-input"
-                     :validate-status="(formErrors.has('last_name') ? 'error' : '')"
-                     :help="formErrors.first('last_name')">
-                        <a-input placeholder="Last Name" v-model="formFields.last_name">
-                            <a-icon  size="large" slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item class="mb-10 required-input"
-                     :validate-status="(formErrors.has('email') ? 'error' : '')"
-                     :help="formErrors.first('email')">
-                        <a-input placeholder="Email" v-model="formFields.email">
-                            <a-icon  size="large" slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item class="mb-10 required-input"
-                     :validate-status="(formErrors.has('password') ? 'error' : '')"
-                     :help="formErrors.first('password')">
-                        <a-input
-                        type="password"
-                        v-model="formFields.password"
-                         placeholder="Password">
-                            <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item class="mb-10 required-input"
-                     :validate-status="(formErrors.has('password_confirmation') ? 'error' : '')"
-                     :help="formErrors.first('password_confirmation')">
-                        <a-input
-                        type="password"
-                        v-model="formFields.password_confirmation"
-                         placeholder="Confirm Password">
-                            <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item class="mb-10 required-input"
-                         :validate-status="(formErrors.has('gender') ? 'error' : '')"
-                         :help="formErrors.first('gender')">
-                        <a-select allowClear v-model="formFields.gender" placeholder="Pick Gender" >
-                            <a-select-option value="1">Male</a-select-option>
-                            <a-select-option value="2">Female</a-select-option>
-                        </a-select>
-                    </a-form-item>
-                    <a-form-item class="mb-10 required-input"
-                                 :validate-status="(formErrors.has('birthday') ? 'error' : '')"
-                                 :help="formErrors.first('birthday')">
-                        <a-date-picker v-model="formFields.birthday" format="DD-MM-YYYY" placeholder="Pick Birth date"/>
-                    </a-form-item>
-                    <a-form-item>
-                        <a-row>
-                            <a-col span="24" class="mt-20 text-center">
-                                <a-button size="large" type="primary" block html-type="submit" class="login-form-button">
-                                    <span class="pl-10 pr-10">Register</span>
-                                </a-button>
-                            </a-col>
-                            <a-col span="24" class="mt-20 text-right">
-                                <div><router-link class="login-form-forgot" :to="{name: 'login'}">Let me Login</router-link></div>
-                            </a-col>
-                        </a-row>
-                    </a-form-item>
+    <div class="auth-page">
+        <b-row class="auth-shell no-gutters">
+            <b-col cols="12" lg="4" class="auth-left-panel">
+                <div class="auth-brand">
+                    <span>ATS</span>
+                    <strong>Recruitment Manager</strong>
                 </div>
-            </form>
-        </div>
+                <h1>Create Account</h1>
+                <p>Join the recruitment portal and manage your applications in one simple place.</p>
+                <div class="auth-feature-list">
+                    <span><i class="bi bi-check-circle mr-5"></i>Create your candidate profile</span>
+                    <span><i class="bi bi-check-circle mr-5"></i>Upload documents</span>
+                    <span><i class="bi bi-check-circle mr-5"></i>Apply for jobs</span>
+                </div>
+            </b-col>
+
+            <b-col cols="12" lg="8" class="auth-form-panel">
+                <div class="auth-form-card auth-form-card-wide">
+                    <div class="auth-form-header">
+                        <div class="auth-card-brand">
+                            <span>ATS</span>
+                            <strong>Recruitment Manager</strong>
+                        </div>
+                        <h2>Create Account</h2>
+                        <p>Fill in your details to register.</p>
+                    </div>
+
+                    <form @submit.prevent="submit" autocomplete="off">
+                        <b-row>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="First Name *" class="mb-15 required-input" :state="formErrors.has('first_name') ? false : null" :invalid-feedback="formErrors.first('first_name')">
+                                    <b-form-input placeholder="First Name" v-model="formFields.first_name" :state="formErrors.has('first_name') ? false : null"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Last Name *" class="mb-15 required-input" :state="formErrors.has('last_name') ? false : null" :invalid-feedback="formErrors.first('last_name')">
+                                    <b-form-input placeholder="Last Name" v-model="formFields.last_name" :state="formErrors.has('last_name') ? false : null"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
+
+                        <b-form-group label="Email *" class="mb-15 required-input" :state="formErrors.has('email') ? false : null" :invalid-feedback="formErrors.first('email')">
+                            <b-form-input placeholder="candidate@example.com" v-model="formFields.email" :state="formErrors.has('email') ? false : null"></b-form-input>
+                        </b-form-group>
+
+                        <b-row>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Password *" class="mb-15 required-input" :state="formErrors.has('password') ? false : null" :invalid-feedback="formErrors.first('password')">
+                                    <b-form-input type="password" v-model="formFields.password" placeholder="Password" :state="formErrors.has('password') ? false : null"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Confirm Password *" class="mb-15 required-input" :state="formErrors.has('password_confirmation') ? false : null" :invalid-feedback="formErrors.first('password_confirmation')">
+                                    <b-form-input type="password" v-model="formFields.password_confirmation" placeholder="Confirm Password" :state="formErrors.has('password_confirmation') ? false : null"></b-form-input>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
+
+                        <b-row>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Gender *" class="mb-15 required-input" :state="formErrors.has('gender') ? false : null" :invalid-feedback="formErrors.first('gender')">
+                                    <v-select v-model="formFields.gender" :options="genderOptions" label="text" :reduce="option => option.value" :class="{ 'is-invalid': formErrors.has('gender') }" placeholder="Pick Gender"></v-select>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6">
+                                <b-form-group label="Birthday *" class="mb-15 required-input" :state="formErrors.has('birthday') ? false : null" :invalid-feedback="formErrors.first('birthday')">
+                                    <date-picker class="auth-date-picker" v-model="formFields.birthday" format="DD-MM-YYYY" placeholder="Pick Birth date" :input-class="formErrors.has('birthday') ? 'form-control is-invalid' : 'form-control'"></date-picker>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
+
+                        <b-button size="lg" variant="primary" block type="submit" class="auth-submit-button" :disabled="isSubmitted">
+                            {{ isSubmitted ? 'Creating account...' : 'Create Account' }}
+                        </b-button>
+                        <p class="auth-bottom-text">
+                            Already have an account?
+                            <router-link class="auth-link" :to="{name: 'login'}">Login</router-link>
+                        </p>
+                    </form>
+                </div>
+            </b-col>
+        </b-row>
     </div>
 </template>
 <script>
@@ -104,7 +107,11 @@
             return {
                 formFields: {...DEFAULT_FORM_STATE},
                 formErrors: new Error({}),
-                isSubmitted: false
+                isSubmitted: false,
+                genderOptions: [
+                    {value: '1', text: 'Male'},
+                    {value: '2', text: 'Female'},
+                ],
             }
         },
         mounted() {

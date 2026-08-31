@@ -1,83 +1,120 @@
 <template>
     <form @submit.prevent="handleFormSubmit" autocomplete="off">
-        <div>
-            <a-col :md="24">
-                <h1>Profile</h1>
-            </a-col>
-            <a-col :xs="24" :sm="24" :md="24" class="mb-15">
-                <a-card size="small" :title="null" class="custom-card">
-                    <div class="body">
-                        <a-row :gutter="16">
-                            <a-col :xs="24" :sm="24" :md="12">
-                                <a-form-item label="First Name" class="mb-10 required-input"
-                                     :validate-status="(formErrors.has('first_name') ? 'error' : '')"
-                                     :help="formErrors.first('first_name')">
-                                    <a-input v-model="formFields.first_name" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="24" :md="12">
-                                <a-form-item label="Last Name" class="mb-10 required-input"
-                                             :validate-status="(formErrors.has('last_name') ? 'error' : '')"
-                                             :help="formErrors.first('last_name')">
-                                    <a-input v-model="formFields.last_name" />
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                        <a-row :gutter="16">
-                            <a-col :xs="24" :sm="24" :md="12">
-                                <a-form-item label="Password" class="mb-10"
-                                             :validate-status="(formErrors.has('password') ? 'error' : '')"
-                                             :help="formErrors.first('password')">
-                                    <a-input type="password" v-model="formFields.password" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="24" :md="12">
-                                <a-form-item label="Password Confirm" class="mb-10"
-                                             :validate-status="(formErrors.has('password_confirmation') ? 'error' : '')"
-                                             :help="formErrors.first('password_confirmation')">
-                                    <a-input type="password" v-model="formFields.password_confirmation" />
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                        <a-row :gutter="16">
-                            <a-col :xs="24" :sm="24" :md="12">
-                                <a-form-item label="Email" class="mb-10 required-input"
-                                             :validate-status="(formErrors.has('email') ? 'error' : '')"
-                                             :help="formErrors.first('email')">
-                                    <a-input v-model="formFields.email" />
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="24" :md="12">
-                                <a-form-item label="Gender" class="mb-10 required-input"
-                                             :validate-status="(formErrors.has('gender') ? 'error' : '')"
-                                             :help="formErrors.first('gender')">
-                                    <a-select allowClear v-model="formFields.gender">
-                                        <a-select-option value="1">Male</a-select-option>
-                                        <a-select-option value="2">Female</a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                        <a-row :gutter="16">
-                            <a-col :xs="24" :sm="24" :md="12">
-                                <a-form-item label="Birthday" class="mb-10 required-input"
-                                             :validate-status="(formErrors.has('birthday') ? 'error' : '')"
-                                             :help="formErrors.first('birthday')">
-                                    <a-date-picker v-model="formFields.birthday" format="DD-MM-YYYY" placeholder=""/>
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
-                    </div>
-                    <span class="apply-button mt-10">
-                        <a-row>
-                            <a-col :sm="8" class="text-left">
-                                <a @click="handleFormSubmit">Update</a>
-                            </a-col>
-                        </a-row>
-                    </span>
-                </a-card>
-            </a-col>
-        </div>
+        <b-card class="profile-card">
+            <div class="profile-card-header">
+                <div>
+                    <h3>Profile Information</h3>
+                    <p>Update your account details and basic personal information.</p>
+                </div>
+                <b-button variant="primary" type="submit" :disabled="loading">
+                    <i class="bi bi-check-circle mr-5"></i>
+                    {{ loading ? 'Updating...' : 'Update Profile' }}
+                </b-button>
+            </div>
+
+            <b-row>
+                <b-col cols="12" md="6">
+                    <b-form-group label="First Name *" class="mb-15 required-input">
+                        <b-form-input
+                            v-model="formFields.first_name"
+                            :class="{ 'is-invalid': formErrors.has('first_name') }"
+                        />
+                        <div class="invalid-feedback d-block" v-if="formErrors.has('first_name')">
+                            {{formErrors.first('first_name')}}
+                        </div>
+                    </b-form-group>
+                </b-col>
+                <b-col cols="12" md="6">
+                    <b-form-group label="Last Name *" class="mb-15 required-input">
+                        <b-form-input
+                            v-model="formFields.last_name"
+                            :class="{ 'is-invalid': formErrors.has('last_name') }"
+                        />
+                        <div class="invalid-feedback d-block" v-if="formErrors.has('last_name')">
+                            {{formErrors.first('last_name')}}
+                        </div>
+                    </b-form-group>
+                </b-col>
+            </b-row>
+
+            <b-row>
+                <b-col cols="12" md="6">
+                    <b-form-group label="Email *" class="mb-15 required-input">
+                        <b-form-input
+                            v-model="formFields.email"
+                            :class="{ 'is-invalid': formErrors.has('email') }"
+                        />
+                        <div class="invalid-feedback d-block" v-if="formErrors.has('email')">
+                            {{formErrors.first('email')}}
+                        </div>
+                    </b-form-group>
+                </b-col>
+                <b-col cols="12" md="6">
+                    <b-form-group label="Gender *" class="mb-15 required-input">
+                        <v-select
+                            v-model="formFields.gender"
+                            :options="genderOptions"
+                            label="text"
+                            :reduce="option => option.value"
+                            :class="{ 'is-invalid': formErrors.has('gender') }"
+                            placeholder="Select Gender"
+                        ></v-select>
+                        <div class="invalid-feedback d-block" v-if="formErrors.has('gender')">
+                            {{formErrors.first('gender')}}
+                        </div>
+                    </b-form-group>
+                </b-col>
+            </b-row>
+
+            <b-row>
+                <b-col cols="12" md="6">
+                    <b-form-group label="Birthday *" class="mb-15 required-input">
+                        <date-picker
+                            class="profile-date-picker"
+                            v-model="formFields.birthday"
+                            format="DD-MM-YYYY"
+                            :input-class="`form-control ${formErrors.has('birthday') ? 'is-invalid' : ''}`"
+                            placeholder="Select Birthday"
+                        />
+                        <div class="invalid-feedback d-block" v-if="formErrors.has('birthday')">
+                            {{formErrors.first('birthday')}}
+                        </div>
+                    </b-form-group>
+                </b-col>
+            </b-row>
+
+            <div class="profile-password-box">
+                <h5>Password</h5>
+                <p>Leave password fields blank if you do not want to change it.</p>
+
+                <b-row>
+                    <b-col cols="12" md="6">
+                        <b-form-group label="Password" class="mb-15">
+                            <b-form-input
+                                type="password"
+                                v-model="formFields.password"
+                                :class="{ 'is-invalid': formErrors.has('password') }"
+                            />
+                            <div class="invalid-feedback d-block" v-if="formErrors.has('password')">
+                                {{formErrors.first('password')}}
+                            </div>
+                        </b-form-group>
+                    </b-col>
+                    <b-col cols="12" md="6">
+                        <b-form-group label="Confirm Password" class="mb-15">
+                            <b-form-input
+                                type="password"
+                                v-model="formFields.password_confirmation"
+                                :class="{ 'is-invalid': formErrors.has('password_confirmation') }"
+                            />
+                            <div class="invalid-feedback d-block" v-if="formErrors.has('password_confirmation')">
+                                {{formErrors.first('password_confirmation')}}
+                            </div>
+                        </b-form-group>
+                    </b-col>
+                </b-row>
+            </div>
+        </b-card>
     </form>
 </template>
 <script>
@@ -91,6 +128,7 @@
         first_name: null,
         last_name: null,
         password: null,
+        password_confirmation: null,
         email: null,
         gender: null,
         birthday: null,
@@ -100,15 +138,28 @@
         data() {
             return {
                 formFields: {...DEFAULT_FORM_STATE},
-                formErrors: new Error({})
+                formErrors: new Error({}),
+                loading: false,
+                genderOptions: [
+                    {value: '1', text: 'Male'},
+                    {value: '2', text: 'Female'},
+                ],
             }
         },
         mounted() {
             const user = getAuthUser();
-            this.formFields = {...this.formFields, ...user,  birthday: moment(user.birthday), gender: user.gender.toString()};
+            this.formFields = {
+                ...this.formFields,
+                ...user,
+                birthday: (user.birthday ? moment(user.birthday).toDate() : null),
+                gender: (user.gender ? user.gender.toString() : null),
+            };
         },
         methods: {
             handleFormSubmit() {
+                this.loading = true;
+                this.formErrors = new Error({});
+
                 request({
                     method: "post",
                     url: `users/profile`,
@@ -128,7 +179,8 @@
                         }
 
                         handleServerError(errors);
-                    });
+                    })
+                    .finally(() => this.loading = false);
             },
         }
     }

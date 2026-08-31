@@ -1,100 +1,120 @@
 <template>
-    <a-row>
-        <a-col span="24">
-            <div>
-                <a-row>
-                    <a-col :xs="24" :sm="24" :md="12">
-                        <h2 class="mb-0">
-                            All Job<strong> Departments</strong>
-                        </h2>
-                    </a-col>
-                    <a-col :xs="24" :sm="24" :md="12" class="text-right">
-                        <a-button shape="round" class="mr-10" @click="handleFormClick" title="Add New Entry">New Entry</a-button>
-                        <a-button shape="round" class="mr-10" icon="filter" @click="handleFilterClick" title="Advance filter" />
-                        <a-dropdown>
-                            <a href="javascript:;" title="Export data"><a-icon type="ellipsis" :style="{ fontSize: '20px', color: '#08c' }"/></a>
-                            <a-menu slot="overlay">
-                                <a-menu-item key="1" @click="handleCsvExportClick"> <a-icon type="file-excel" /> Export CSV </a-menu-item>
-                                <a-menu-item key="2" @click="handlePdfExportClick"> <a-icon type="file-pdf" /> Export PDF </a-menu-item>
-                            </a-menu>
-                        </a-dropdown>
-                    </a-col>
-                </a-row>
-            </div>
+    <b-row>
+        <b-col cols="12">
+            <b-row class="align-items-center job-header-simple">
+                <b-col cols="12" md="6">
+                    <h2 class="job-header-title">
+                        Job Departments
+                    </h2>
+                </b-col>
+
+                <b-col cols="12" md="6" class="text-md-right mt-15 mt-md-0">
+                    <b-button variant="primary" class="mr-10" @click="handleFormClick" title="Add New Job Department">
+                        <i class="bi bi-plus-circle mr-5"></i>
+                        New Department
+                    </b-button>
+                    <b-button variant="outline-secondary" class="mr-10" @click="handleFilterClick" title="Advance Filter">
+                        <i class="bi bi-funnel mr-5"></i>
+                        Filter
+                    </b-button>
+                    <b-dropdown right variant="outline-secondary" title="Export Data" text="Export">
+                        <b-dropdown-item @click="handleCsvExportClick">Export CSV</b-dropdown-item>
+                        <b-dropdown-item @click="handlePdfExportClick">Export PDF</b-dropdown-item>
+                    </b-dropdown>
+                </b-col>
+            </b-row>
             <div class="mt-20">
-                <a-drawer
+                <b-sidebar
+                    v-model="filterVisible"
                     title="Filter Panel"
-                    placement="left"
-                    :closable="false"
-                    @close="handleFilterClose"
-                    :visible="filterVisible"
-                    :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto', paddingBottom: '108px'}"
+                    backdrop
+                    shadow
+                    no-header-close
+                    @hidden="handleFilterClose"
                 >
-                    <form @submit.prevent="handleSearch" autocomplete="off">
-                        <a-row>
-                            <a-col>
-                                <a-form-item label="Name" class="mb-10">
-                                    <a-input v-model="filters.name" />
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
+                    <form @submit.prevent="handleSearch" autocomplete="off" class="p-3">
+                        <b-form-group label="Name" class="mb-10">
+                            <b-form-input v-model="filters.name"></b-form-input>
+                        </b-form-group>
                         <div class="filter-footer text-right">
-                            <a-button type="primary" html-type="submit" class="mr-5">Filter</a-button>
-                            <a-button @click="handleFilterClose">Cancel</a-button>
+                            <b-button variant="primary" type="submit" class="mr-5">Filter</b-button>
+                            <b-button @click="handleFilterClose">Cancel</b-button>
                         </div>
                     </form>
-                </a-drawer>
+                </b-sidebar>
 
-                <a-drawer
+                <b-sidebar
+                    v-model="formVisible"
                     :title="formTitle"
-                    placement="right"
-                    :closable="false"
-                    @close="handleFormClose"
-                    :visible="formVisible"
-                    :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto', paddingBottom: '108px'}"
+                    right
+                    backdrop
+                    shadow
+                    no-header-close
+                    width="760px"
+                    sidebar-class="master-form-sidebar"
+                    body-class="master-form-sidebar-body"
+                    @hidden="handleFormClose"
                 >
                     <form @submit.prevent="handleFormSubmit" autocomplete="off">
-                        <a-row>
-                            <a-col>
-                                <a-form-item label="Name" class="mb-10 required-input"
-                                 :validate-status="(formErrors.has('name') ? 'error' : '')"
-                                 :help="formErrors.first('name')">
-                                    <a-input v-model="formFields.name" />
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
+                        <b-form-group
+                            label="Name *"
+                            class="mb-10 required-input"
+                            :state="formErrors.has('name') ? false : null"
+                            :invalid-feedback="formErrors.first('name')"
+                        >
+                            <b-form-input
+                                v-model="formFields.name"
+                                :state="formErrors.has('name') ? false : null"
+                            ></b-form-input>
+                        </b-form-group>
                         <div class="filter-footer text-right">
-                            <a-button type="primary" html-type="submit" class="mr-5">Submit</a-button>
-                            <a-button @click="handleFormClose">Cancel</a-button>
+                            <b-button variant="primary" type="submit" class="mr-5">Submit</b-button>
+                            <b-button @click="handleFormClose">Cancel</b-button>
                         </div>
                     </form>
-                </a-drawer>
+                </b-sidebar>
 
-                <a-table
-                    :columns="columns"
-                    :rowKey="record => record.id"
-                    :dataSource="dataSource"
-                    :pagination="pagination"
-                    :loading="loading"
-                    @change="handleTableChange">
-                    <template slot="action" slot-scope="text, record, index" class="text-right">
-                        <a-button size="small" type="default" shape="circle" class="mr-5" title="Edit" @click="handleEditRecord(record.id)">
-                            <a-icon type="edit" />
-                        </a-button>
-                        <a-popconfirm
-                            placement="left"
-                            title="Sure to delete?"
-                            @confirm="() => handleDeleteRecord(record.id)"
-                        >
-                            <a-button size="small" type="default" shape="circle" title="Delete">
-                                <a-icon type="delete" />
-                            </a-button>
-                        </a-popconfirm>
+                <b-table
+                    class="fit-table job-departments-table master-modern-table"
+                    responsive
+                    hover
+                    show-empty
+                    empty-text="No data available"
+                    :items="dataSource"
+                    :fields="fields"
+                    :busy="loading"
+                    no-local-sorting
+                    @sort-changed="handleTableChange"
+                >
+                    <template #cell(name)="data">
+                        <span class="job-title-text">{{data.item.name}}</span>
                     </template>
-                </a-table>
+                    <template #cell(action)="data">
+                        <div class="job-action-buttons text-right">
+                            <b-button size="sm" variant="outline-primary" class="mr-5" title="Edit" @click="handleEditRecord(data.item.id)">
+                                <i class="bi bi-pencil-square mr-5"></i>
+                                Edit
+                            </b-button>
+                            <b-button size="sm" variant="outline-danger" title="Delete" @click="confirmDeleteRecord(data.item.id)">
+                                <i class="bi bi-trash mr-5"></i>
+                                Delete
+                            </b-button>
+                        </div>
+                    </template>
+                </b-table>
+
+                <b-pagination
+                    v-if="pagination && pagination.total"
+                    v-model="currentPage"
+                    :total-rows="pagination.total"
+                    :per-page="getPageSize()"
+                    align="right"
+                    class="mt-3"
+                    @change="handlePageChange"
+                ></b-pagination>
             </div>
-        </a-col>
-    </a-row>
+        </b-col>
+    </b-row>
 </template>
 <script>
     import {request} from "../../util/request";
@@ -123,27 +143,28 @@
                 dataSource: [],
                 pagination: {
                     page: 1,
+                    total: 0,
+                    per_page: 10,
                 },
+                currentPage: 1,
                 loading: false,
-                columns: [
+                fields: [
                     {
-                        title: 'Name',
-                        dataIndex: 'name',
-                        width: 150,
-                        sorter: true,
+                        key: 'name',
+                        label: 'Name',
+                        sortable: true,
                     },
                     {
-                        title: 'Action',
-                        className: 'text-right',
-                        dataIndex: 'action',
-                        width: 150,
-                        scopedSlots: { customRender: 'action' },
+                        key: 'action',
+                        label: 'Action',
+                        thClass: 'text-right',
+                        tdClass: 'text-right',
                     }
                 ],
                 listQueryParams: {},
                 filterVisible: false,
                 filters: {
-                    title: null,
+                    name: null,
                 },
                 formVisible: false,
                 formFields: {...DEFAULT_FORM_STATE},
@@ -154,21 +175,40 @@
             this.loadList({ page: 1 });
         },
         methods: {
-            handleTableChange(pagination, filters, sorter) {
+            getPageSize() {
+                return this.pagination.per_page || this.pagination.pageSize || 10;
+            },
+            handleTableChange(sortContext) {
                 const pager = { ...this.pagination };
-                pager.current = pagination.current;
+                pager.current = this.currentPage;
                 this.pagination = pager;
                 const listQueryParams = {
-                    page: pagination.current,
-                    pageSize: (pagination.pageSize ? pagination.pageSize : 10),
-                    sortField: sorter.field,
-                    sortOrder: (sorter.order === 'descend' ? 'desc' : 'asc'),
-                    ...filters
+                    ...this.listQueryParams,
+                    page: this.currentPage,
+                    pageSize: this.getPageSize(),
+                    sortField: sortContext.sortBy,
+                    sortOrder: (sortContext.sortDesc ? 'desc' : 'asc'),
                 };
                 this.listQueryParams = listQueryParams;
                 this.loadList(listQueryParams);
             },
+            handlePageChange(page) {
+                const listQueryParams = {
+                    ...this.listQueryParams,
+                    page: page,
+                    pageSize: this.getPageSize(),
+                };
+                this.currentPage = page;
+                this.listQueryParams = listQueryParams;
+                this.loadList(listQueryParams);
+            },
             loadList(listQueryParams) {
+                listQueryParams = {
+                    page: 1,
+                    pageSize: 10,
+                    ...listQueryParams,
+                };
+
                 this.loading = true;
                 this.formErrors = new Error({});
                 request({
@@ -180,13 +220,30 @@
                 .then((response) => {
                     const {data, meta} = response;
                     this.dataSource = data;
-                    this.pagination = meta;
+                    this.pagination = meta || {
+                        page: 1,
+                        total: data.length,
+                        per_page: 10,
+                    };
+                    this.currentPage = this.pagination.current_page || this.pagination.current || this.pagination.page || this.currentPage;
                 })
-                .catch(() => this.dataSource = [] )
+                .catch(() => {
+                    this.dataSource = [];
+                    this.pagination = {
+                        page: 1,
+                        total: 0,
+                        per_page: 10,
+                    };
+                })
                 .finally(() => this.loading = false);
             },
             handleSearch() {
-                this.listQueryParams = {...this.listQueryParams, filters: this.filters};
+                this.listQueryParams = {
+                    ...this.listQueryParams,
+                    page: 1,
+                    filters: this.filters,
+                };
+                this.currentPage = 1;
                 this.loadList(this.listQueryParams);
             },
             handleFilterClick() {
@@ -242,6 +299,11 @@
                 .catch((errors) => {
 
                 })
+            },
+            confirmDeleteRecord(id) {
+                if (window.confirm('Sure to delete?')) {
+                    this.handleDeleteRecord(id);
+                }
             },
             handleDeleteRecord(id) {
                 request({

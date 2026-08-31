@@ -1,180 +1,233 @@
 <template>
-    <a-row>
-        <a-col span="24">
-            <div>
-                <a-row>
-                    <a-col :xs="24" :sm="24" :md="12">
-                        <h2 class="mb-0">
-                            All Job <strong>Applications</strong>
-                        </h2>
-                    </a-col>
-                    <a-col :xs="24" :sm="24" :md="12" class="text-right">
-                        <a-button shape="round" class="mr-10" icon="filter" @click="handleFilterClick" title="Advance filter" />
-                        <a-dropdown>
-                            <a href="javascript:;" title="Export data"><a-icon type="ellipsis" :style="{ fontSize: '20px', color: '#08c' }"/></a>
-                            <a-menu slot="overlay">
-                                <a-menu-item key="1" @click="handleCsvExportClick"> <a-icon type="file-excel" /> Export CSV </a-menu-item>
-                                <a-menu-item key="2" @click="handlePdfExportClick"> <a-icon type="file-pdf" /> Export PDF </a-menu-item>
-                            </a-menu>
-                        </a-dropdown>
-                    </a-col>
-                </a-row>
-            </div>
+    <b-row>
+        <b-col cols="12">
+            <b-row class="align-items-center job-header-simple">
+                <b-col cols="12" md="6">
+                    <h2 class="job-header-title">
+                        Job Applications
+                    </h2>
+                </b-col>
+
+                <b-col cols="12" md="6" class="text-md-right mt-15 mt-md-0">
+                    <b-button variant="outline-secondary" class="mr-10" @click="handleFilterClick" title="Advance Filter">
+                        <i class="bi bi-funnel mr-5"></i>
+                        Filter
+                    </b-button>
+                    <b-dropdown right variant="outline-secondary" title="Export Data" text="Export">
+                        <b-dropdown-item @click="handleCsvExportClick">Export CSV</b-dropdown-item>
+                        <b-dropdown-item @click="handlePdfExportClick">Export PDF</b-dropdown-item>
+                    </b-dropdown>
+                </b-col>
+            </b-row>
 
             <div class="mt-20">
-                <a-drawer
-                    title="Filter Panel"
-                    placement="left"
-                    :closable="false"
-                    @close="handleFilterClose"
-                    :visible="filterVisible"
-                    :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto', paddingBottom: '108px'}"
-                >
-                    <form @submit.prevent="handleSearch" autocomplete="off">
-                        <a-row>
-                            <a-col>
-                                <a-form-item label="Status" class="mb-10">
-                                    <a-select allowClear v-model="filters.status">
-                                        <a-select-option value="1">Pending</a-select-option>
-                                        <a-select-option value="2">Interview Scheduled</a-select-option>
-                                        <a-select-option value="3">On Hold</a-select-option>
-                                        <a-select-option value="4">Rejected</a-select-option>
-                                        <a-select-option value="5">Hired</a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col>
-                                <a-form-item label="Job Application Number" class="mb-10">
-                                    <a-input v-model="filters.job_application_number" />
-                                </a-form-item>
-                            </a-col>
-                        </a-row>
+                <b-sidebar v-model="filterVisible" title="Filter Panel" shadow backdrop no-header-close>
+                    <form @submit.prevent="handleSearch" autocomplete="off" class="p-3">
+                        <b-form-group label="Status" class="mb-10">
+                            <v-select
+                                v-model="filters.status"
+                                :options="statusOptions"
+                                label="text"
+                                :reduce="option => option.value"
+                                placeholder="Select Status"
+                            ></v-select>
+                        </b-form-group>
+                        <b-form-group label="Job Application Number" class="mb-10">
+                            <b-form-input v-model="filters.job_application_number"></b-form-input>
+                        </b-form-group>
                         <div class="filter-footer text-right">
-                            <a-button type="primary" html-type="submit" class="mr-5">Filter</a-button>
-                            <a-button @click="handleFilterClose">Cancel</a-button>
+                            <b-button variant="primary" type="submit" class="mr-5">Filter</b-button>
+                            <b-button @click="handleFilterClose">Cancel</b-button>
                         </div>
                     </form>
-                </a-drawer>
+                </b-sidebar>
 
-                <a-drawer
-                    width="600"
+                <b-sidebar
+                    v-model="formVisible"
                     :title="formTitle"
-                    placement="right"
-                    :closable="false"
-                    @close="handleFormClose"
-                    :visible="formVisible"
-                    :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto', paddingBottom: '108px'}"
+                    right
+                    shadow
+                    backdrop
+                    no-header-close
+                    width="760px"
+                    sidebar-class="job-application-form-sidebar"
+                    body-class="job-application-form-sidebar-body"
                 >
                     <form @submit.prevent="handleFormSubmit" autocomplete="off">
-                        <a-row>
-                            <a-col>
-                                <a-form-item label="Status" class="mb-10 required-input"
-                                         :validate-status="(formErrors.has('status') ? 'error' : '')"
-                                         :help="formErrors.first('status')">
-                                    <a-select allowClear v-model="formFields.status">
-                                        <a-select-option value="1">Pending</a-select-option>
-                                        <a-select-option value="2">Interview Scheduled</a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col v-if="formFields.status === '2'">
-                                <a-form-item label="Company" class="mb-10 required-input"
-                                     :validate-status="(formErrors.has('company_id') ? 'error' : '')"
-                                     :help="formErrors.first('company_id')">
-                                    <a-select allowClear v-model="formFields.company_id">
-                                        <a-select-option v-for="(company, index) in dropdowns.companies"
-                                                         :key="index" :disabled="company.disabled" :value="company.id">
-                                            {{company.label}}
-                                        </a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col v-if="formFields.status === '2'">
-                                <a-form-item label="Interview Stage" class="mb-10 required-input"
-                                     :validate-status="(formErrors.has('interview_stage_id') ? 'error' : '')"
-                                     :help="formErrors.first('interview_stage_id')">
-                                    <a-select allowClear v-model="formFields.interview_stage_id">
-                                        <a-select-option v-for="(interview_stage, index) in dropdowns.interview_stages"
-                                                         :key="index" :value="interview_stage.id">
-                                            {{interview_stage.label}}
-                                        </a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col v-if="formFields.status === '2'">
-                                <a-form-item label="Interview Date" class="mb-10 required-input"
-                                     :validate-status="(formErrors.has('interview_date') ? 'error' : '')"
-                                     :help="formErrors.first('interview_date')">
-                                    <a-date-picker v-model="formFields.interview_date" format="DD-MM-YYYY" placeholder=""/>
-                                </a-form-item>
-                            </a-col>
-                            <a-col v-if="formFields.status === '2'">
-                                Action will hide the Edit button and create Interview
-                            </a-col>
-                        </a-row>
+                        <b-form-group
+                            label="Status *"
+                            class="mb-10 required-input"
+                            :state="invalidState('status')"
+                            :invalid-feedback="formErrors.first('status')"
+                        >
+                            <v-select
+                                v-model="formFields.status"
+                                :options="formStatusOptions"
+                                label="text"
+                                :reduce="option => option.value"
+                                placeholder="Select Status"
+                            ></v-select>
+                        </b-form-group>
+                        <b-form-group
+                            v-if="formFields.status === '2'"
+                            label="Company *"
+                            class="mb-10 required-input"
+                            :state="invalidState('company_id')"
+                            :invalid-feedback="formErrors.first('company_id')"
+                        >
+                            <v-select
+                                v-model="formFields.company_id"
+                                :options="dropdowns.companies"
+                                label="label"
+                                :reduce="company => company.id"
+                                :selectable="company => !company.disabled"
+                                placeholder="Select Company"
+                            ></v-select>
+                        </b-form-group>
+                        <b-form-group
+                            v-if="formFields.status === '2'"
+                            label="Interview Stage *"
+                            class="mb-10 required-input"
+                            :state="invalidState('interview_stage_id')"
+                            :invalid-feedback="formErrors.first('interview_stage_id')"
+                        >
+                            <v-select
+                                v-model="formFields.interview_stage_id"
+                                :options="dropdowns.interview_stages"
+                                label="label"
+                                :reduce="stage => stage.id"
+                                placeholder="Select Interview Stage"
+                            ></v-select>
+                        </b-form-group>
+                        <b-form-group
+                            v-if="formFields.status === '2'"
+                            label="Interview Date *"
+                            class="mb-10 required-input"
+                            :state="invalidState('interview_date')"
+                            :invalid-feedback="formErrors.first('interview_date')"
+                        >
+                            <date-picker v-model="formFields.interview_date" format="DD-MM-YYYY" value-type="YYYY-MM-DD" placeholder="" />
+                        </b-form-group>
+                        <div v-if="formFields.status === '2'" class="mb-3">
+                            Action will hide the Edit button and create Interview
+                        </div>
                         <div class="filter-footer text-right">
-                            <a-button type="primary" html-type="submit" class="mr-5">Submit</a-button>
-                            <a-button @click="handleFormClose">Cancel</a-button>
+                            <b-button variant="primary" type="submit" class="mr-5">Submit</b-button>
+                            <b-button @click="handleFormClose">Cancel</b-button>
                         </div>
                     </form>
-                </a-drawer>
+                </b-sidebar>
 
-                <a-table
-                    class="fit-table job-applications-table"
-                    :columns="columns"
-                    :rowKey="record => record.id"
-                    :dataSource="dataSource"
-                    :pagination="pagination"
-                    :loading="loading"
-                    @change="handleTableChange">
-                    <template slot="action" slot-scope="text, record, index" class="text-right">
-                        <a-button
-                            size="small"
-                            type="default" shape="circle" class="mr-5" title="Edit"
-                            @click="handleEditRecord(record.id)"
-                            v-if="record.status <= 1">
-                            <a-icon type="edit" />
-                        </a-button>
-                        <a-popconfirm
-                            v-if="record.status > 1"
-                            placement="left"
-                            title="Sure to make it pending?"
-                            @confirm="() => handlePendingAgain(record.id)"
-                        >
-                            <a-button size="small" type="default" shape="circle" title="Make it Pending">
-                                <a-icon type="caret-left" />
-                            </a-button>
-                        </a-popconfirm>
+                <b-table
+                    class="fit-table job-applications-table job-application-modern-table"
+                    responsive
+                    hover
+                    show-empty
+                    empty-text="No data available"
+                    no-local-sorting
+                    :fields="columns"
+                    :items="dataSource"
+                    :busy="loading"
+                    :sort-by.sync="tableSortBy"
+                    :sort-desc.sync="tableSortDesc"
+                    @sort-changed="handleSortChange"
+                >
+                    <template #cell(details)="row">
+                        <b-button size="sm" variant="outline-primary" class="job-table-details-btn" @click="row.toggleDetails">
+                            <i class="bi bi-eye mr-5"></i>
+                            {{ row.detailsShowing ? 'Hide' : 'View' }}
+                        </b-button>
                     </template>
-                    <template slot="job_title" slot-scope="text, record, index">
-                        {{record.job.title}}
+                    <template #cell(job_application_number)="data">
+                        <div class="job-application-number-cell">
+                            <div class="job-application-number">{{data.item.job_application_number}}</div>
+                            <div class="job-application-date">
+                                Applied {{covertData(data.item.created_at)}}
+                            </div>
+                        </div>
                     </template>
-                    <template slot="job_company" slot-scope="text, record, index">
-                        {{record.job.company}}
+                    <template #cell(candidate_id)="data">
+                        <div class="job-title-cell">
+                            <div class="job-title-text">
+                                {{data.item.candidate.first_name}} {{data.item.candidate.last_name}}
+                            </div>
+                            <div class="job-meta-line">
+                                {{data.item.candidate.email}}
+                            </div>
+                        </div>
                     </template>
-                    <template slot="candidate_name" slot-scope="text, record, index">
-                        {{record.candidate.first_name}} {{record.candidate.last_name}}
-                    </template>\
-                    <template slot="status" slot-scope="text, record, index" class="text-center">
-                        {{record._status_}}
+                    <template #cell(job_id)="data">
+                        <div class="job-title-cell">
+                            <div class="job-title-text">{{data.item.job.title}}</div>
+                            <div class="job-meta-line">
+                                {{data.item.job.company}} <span v-if="data.item.job.department">- {{data.item.job.department}}</span>
+                            </div>
+                        </div>
                     </template>
-                    <template slot="applied_at" slot-scope="text, record, index" class="text-center">
-                        {{covertData(record.created_at)}}
+                    <template #cell(action)="data">
+                        <div class="job-action-buttons text-right">
+                            <b-button
+                                size="sm"
+                                variant="outline-primary"
+                                class="mr-5"
+                                title="Edit"
+                                @click="handleEditRecord(data.item.id)"
+                                v-if="data.item.status <= 1"
+                            >
+                                <i class="bi bi-pencil-square mr-5"></i>
+                                Edit
+                            </b-button>
+                            <b-button
+                                v-if="data.item.status > 1"
+                                size="sm"
+                                variant="outline-warning"
+                                title="Make it Pending"
+                                @click="confirmPendingAgain(data.item.id)"
+                            >
+                                <i class="bi bi-arrow-counterclockwise mr-5"></i>
+                                Pending
+                            </b-button>
+                        </div>
                     </template>
-                    <div slot="expandedRowRender" slot-scope="record">
-                        <p><strong>Company:</strong> {{record.job.company}}</p>
-                        <p><strong>Department:</strong> {{record.job.department}}</p>
-                        <p v-if="record.user_document">
-                            <strong>Uploaded Document:</strong>
-                            <a target="_blank" :href="record.user_document.download_url">
-                                {{record.user_document.document_type}} - {{record.user_document.filename}}
-                            </a>
-                        </p>
-                    </div>
-                </a-table>
+                    <template #cell(status)="data">
+                        <b-badge :class="applicationStatusClass(data.item.status)">
+                            {{data.item._status_}}
+                        </b-badge>
+                    </template>
+                    <template #row-details="row">
+                        <div class="job-detail-panel">
+                            <b-row>
+                                <b-col cols="12" md="6">
+                                    <p><strong>Company:</strong> {{row.item.job.company}}</p>
+                                    <p><strong>Department:</strong> {{row.item.job.department}}</p>
+                                </b-col>
+                                <b-col cols="12" md="6">
+                                    <p v-if="row.item.user_document">
+                                        <strong>Uploaded Document:</strong>
+                                        <a target="_blank" :href="row.item.user_document.download_url">
+                                            {{row.item.user_document.document_type}} - {{row.item.user_document.filename}}
+                                        </a>
+                                    </p>
+                                    <p v-else>
+                                        <strong>Uploaded Document:</strong> Not uploaded
+                                    </p>
+                                </b-col>
+                            </b-row>
+                        </div>
+                    </template>
+                </b-table>
+                <b-pagination
+                    v-if="pagination && pagination.total"
+                    v-model="paginationCurrent"
+                    :total-rows="pagination.total"
+                    :per-page="pagination.per_page || pagination.pageSize || 10"
+                    align="right"
+                    class="mt-3"
+                    @input="handlePageChange"
+                ></b-pagination>
             </div>
-        </a-col>
-    </a-row>
+        </b-col>
+    </b-row>
 </template>
 <script>
     import {request} from "../../util/request";
@@ -208,56 +261,44 @@
                 dataSource: [],
                 pagination: {
                     page: 1,
+                    total: 0,
+                    per_page: 10,
                 },
+                tableSortBy: null,
+                tableSortDesc: false,
                 loading: false,
                 columns: [
                     {
-                        title: 'Number',
-                        dataIndex: 'job_application_number',
-                        width: 75,
-                        sorter: true,
+                        key: 'details',
+                        label: '',
                     },
                     {
-                        title: 'Candidate',
-                        dataIndex: 'candidate_id',
-                        width: 150,
-                        sorter: true,
-                        scopedSlots: { customRender: 'candidate_name' },
+                        key: 'job_application_number',
+                        label: 'Application',
+                        sortable: true,
                     },
                     {
-                        title: 'Job Title',
-                        dataIndex: 'job_id',
-                        width: 150,
-                        sorter: true,
-                        scopedSlots: { customRender: 'job_title' },
+                        key: 'candidate_id',
+                        label: 'Candidate',
+                        sortable: true,
                     },
                     {
-                        title: 'Job Company',
-                        dataIndex: 'company',
-                        width: 150,
-                        sorter: false,
-                        scopedSlots: { customRender: 'job_company' },
+                        key: 'job_id',
+                        label: 'Job Title',
+                        sortable: true,
                     },
                     {
-                        title: 'Status',
-                        dataIndex: 'status',
-                        width: 150,
-                        sorter: true,
-                        scopedSlots: { customRender: 'status' },
+                        key: 'status',
+                        label: 'Status',
+                        sortable: true,
+                        thClass: 'text-center',
+                        tdClass: 'text-center',
                     },
                     {
-                        title: 'Applied At',
-                        dataIndex: 'created_at',
-                        width: 150,
-                        sorter: true,
-                        scopedSlots: { customRender: 'applied_at' },
-                    },
-                    {
-                        title: 'Action',
-                        className: 'text-right',
-                        dataIndex: 'action',
-                        width: 150,
-                        scopedSlots: { customRender: 'action' },
+                        key: 'action',
+                        label: 'Action',
+                        thClass: 'text-right',
+                        tdClass: 'text-right',
                     }
                 ],
                 listQueryParams: {},
@@ -276,7 +317,18 @@
                     interview_stages: [],
                     companies: [],
                     candidates: [],
-                }
+                },
+                statusOptions: [
+                    {value: '1', text: 'Pending'},
+                    {value: '2', text: 'Interview Scheduled'},
+                    {value: '3', text: 'On Hold'},
+                    {value: '4', text: 'Rejected'},
+                    {value: '5', text: 'Hired'},
+                ],
+                formStatusOptions: [
+                    {value: '1', text: 'Pending'},
+                    {value: '2', text: 'Interview Scheduled'},
+                ],
             }
         },
         mounted() {
@@ -285,6 +337,42 @@
             this.getCompanies();
         },
         methods: {
+            invalidState(field) {
+                return this.formErrors.has(field) ? false : null;
+            },
+            applicationStatusClass(status) {
+                if (status === 1) {
+                    return 'job-application-status-badge job-application-status-pending';
+                }
+
+                if (status === 2) {
+                    return 'job-application-status-badge job-application-status-scheduled';
+                }
+
+                if (status === 4) {
+                    return 'job-application-status-badge job-application-status-rejected';
+                }
+
+                if (status === 5) {
+                    return 'job-application-status-badge job-application-status-hired';
+                }
+
+                return 'job-application-status-badge job-application-status-hold';
+            },
+            handleSortChange(ctx) {
+                this.handleTableChange(
+                    {current: this.paginationCurrent, pageSize: (this.pagination.per_page || 10)},
+                    {},
+                    {field: ctx.sortBy, order: (ctx.sortDesc ? 'descend' : 'ascend')}
+                );
+            },
+            handlePageChange(page) {
+                this.handleTableChange(
+                    {current: page, pageSize: this.pagination.per_page || 10},
+                    {},
+                    {field: this.tableSortBy, order: (this.tableSortDesc ? 'descend' : 'ascend')}
+                );
+            },
             handleTableChange(pagination, filters, sorter) {
                 const pager = { ...this.pagination };
                 pager.current = pagination.current;
@@ -300,6 +388,12 @@
                 this.loadList(listQueryParams);
             },
             loadList(listQueryParams) {
+                listQueryParams = {
+                    page: 1,
+                    pageSize: 10,
+                    ...listQueryParams,
+                };
+
                 this.loading = true;
                 this.formErrors = new Error({});
                 request({
@@ -311,13 +405,28 @@
                 .then((response) => {
                     const {data, meta} = response;
                     this.dataSource = data;
-                    this.pagination = meta;
+                    this.pagination = meta || {
+                        page: 1,
+                        total: data.length,
+                        per_page: 10,
+                    };
                 })
-                .catch(() => this.dataSource = [] )
+                .catch(() => {
+                    this.dataSource = [];
+                    this.pagination = {
+                        page: 1,
+                        total: 0,
+                        per_page: 10,
+                    };
+                })
                 .finally(() => this.loading = false);
             },
             handleSearch() {
-                this.listQueryParams = {...this.listQueryParams, filters: this.filters};
+                this.listQueryParams = {
+                    ...this.listQueryParams,
+                    page: 1,
+                    filters: this.filters,
+                };
                 this.loadList(this.listQueryParams);
             },
             handleFilterClick() {
@@ -363,6 +472,11 @@
                         handleServerError(errors);
                     });
             },
+            confirmPendingAgain(id) {
+                if (window.confirm('Sure to make it pending?')) {
+                    this.handlePendingAgain(id);
+                }
+            },
             handlePendingAgain(id) {
                 request({
                     method: "post",
@@ -403,7 +517,7 @@
                             id: response.data.id,
                             company_id: response.data.company_id,
                             interview_stage_id: response.data.interview_stage_id,
-                            interview_date: (response.data.interview_date) ? moment(response.data.interview_date) : null,
+                            interview_date: (response.data.interview_date) ? moment(response.data.interview_date).format('YYYY-MM-DD') : null,
                             candidate_id: response.data.candidate_id,
                         };
                         this.handleFormClick();
@@ -499,15 +613,18 @@
             }
         },
         computed: {
-
+            paginationCurrent: {
+                get() {
+                    return this.pagination.current_page || this.pagination.current || this.pagination.page || 1;
+                },
+                set(value) {
+                    this.pagination = {...this.pagination, current: value, current_page: value};
+                }
+            }
         }
     }
 </script>
 <style lang="scss">
-    .ant-drawer-body {
-        margin-bottom: 30px;
-    }
-
     @media screen and (max-width: 790px) {
         .fit-table.job-applications-table td:before{ font-weight: bold; }
         .fit-table.job-applications-table td:nth-of-type(1):before { content: "#"; }

@@ -1,111 +1,143 @@
 <template>
     <div>
-        <a-row :gutter="16" class="mb-15">
-            <a-col>
-                <h2 class="mb-0">
-                    Candidate <strong>Overview</strong>
+        <b-row class="align-items-center job-header-simple">
+            <b-col cols="12" md="6">
+                <h2 class="job-header-title">
+                    Candidate Overview
                 </h2>
-            </a-col>
-        </a-row>
-        <a-card title="Filters">
+            </b-col>
+
+            <b-col cols="12" md="6" class="text-md-right mt-15 mt-md-0">
+                <b-button variant="outline-secondary" class="mr-10" @click="handleCsvExportClick">
+                    <i class="bi bi-filetype-csv mr-5"></i>
+                    Export CSV
+                </b-button>
+                <b-button variant="outline-secondary" @click="handlePdfExportClick">
+                    <i class="bi bi-file-earmark-pdf mr-5"></i>
+                    Export PDF
+                </b-button>
+            </b-col>
+        </b-row>
+
+        <b-card class="report-filter-card mb-20">
+            <h5 class="report-filter-title">Filters</h5>
             <form @submit.prevent="loadList" autocomplete="off">
-                <a-row>
-                    <a-skeleton v-if="dropdowns.candidates.loading" active :paragraph="false" v-for="index in 1" :key="index"></a-skeleton>
-                    <a-col :xs="24" :sm="24" :md="21" v-if="!dropdowns.candidates.loading">
-                        <a-row :gutter="18">
-                            <a-col :xs="24" :sm="8" :md="6">
-                                <a-form-item label="Candidates" class="mb-0">
-                                    <a-select v-model="filters.candidates" style="width: 100%" mode="multiple">
-                                        <a-select-option v-for="(candidate, index) in dropdowns.candidates.dataSource"
-                                                         :key="index" :value="candidate.id">
-                                            {{candidate.label}}
-                                        </a-select-option>
-                                    </a-select>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="8" :md="6">
-                                <a-form-item label="From Created At" class="mb-0">
-                                    <a-date-picker v-model="filters.fromRegistered" format="DD-MM-YYYY" placeholder=""/>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="8" :md="6">
-                                <a-form-item label="To Created At" class="mb-0">
-                                    <a-date-picker v-model="filters.toRegistered" format="DD-MM-YYYY" placeholder=""/>
-                                </a-form-item>
-                            </a-col>
-                            <a-col :xs="24" :sm="16" :md="6">
-                                <a-row :gutter="16">
-                                    <a-col :xs="24" :sm="12" :md="12">
-                                        <a-form-item label="Sort By" class="mb-0">
-                                            <a-select v-model="filters.sortField" style="width: 100%" allowClear>
-                                                <a-select-option value="first_name">Candidate FirstName</a-select-option>
-                                                <a-select-option value="last_name">Candidate LastName</a-select-option>
-                                                <a-select-option value="status">Is Active? </a-select-option>
-                                            </a-select>
-                                        </a-form-item>
-                                    </a-col>
-                                    <a-col :xs="24" :sm="12" :md="12">
-                                        <a-form-item label="Sort Order" class="mb-0">
-                                            <a-select v-model="filters.sortOrder" style="width: 100%" allowClear>
-                                                <a-select-option value="desc">Descending</a-select-option>
-                                                <a-select-option value="asc">Ascending</a-select-option>
-                                            </a-select>
-                                        </a-form-item>
-                                    </a-col>
-                                </a-row>
-                            </a-col>
-                        </a-row>
-                    </a-col>
-                    <a-col :xs="24" :sm="24" :md="3" v-if="!dropdowns.candidates.loading">
-                        <a-form-item label=" " class="mb-0 ml-15" :colon="false">
-                            <a-button type="primary" html-type="submit">
-                                <a-icon type="filter" /> Apply
-                            </a-button>
-                            <a href="javascript:;" class="ml-10" title="Export PDF" @click="handlePdfExportClick">
-                                <a-icon type="file-pdf" />
-                            </a>
-                            <a href="javascript:;" class="ml-10" title="Export CSV" @click="handleCsvExportClick">
-                                <a-icon type="file-excel" />
-                            </a>
-                        </a-form-item>
-                    </a-col>
-                </a-row>
+                <b-row>
+                    <b-col cols="12" v-if="dropdowns.candidates.loading">
+                        <b-skeleton v-for="index in 1" :key="index"></b-skeleton>
+                    </b-col>
+                    <b-col cols="12" v-if="!dropdowns.candidates.loading">
+                        <b-row>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="Candidates" class="mb-15">
+                                    <v-select
+                                        v-model="filters.candidates"
+                                        :options="dropdowns.candidates.dataSource"
+                                        label="label"
+                                        :reduce="candidate => candidate.id"
+                                        multiple
+                                        placeholder="Select Candidates"
+                                    ></v-select>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="From Created At" class="mb-15">
+                                    <date-picker v-model="filters.fromRegistered" format="DD-MM-YYYY" value-type="format" placeholder="" />
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="To Created At" class="mb-15">
+                                    <date-picker v-model="filters.toRegistered" format="DD-MM-YYYY" value-type="format" placeholder="" />
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="Sort By" class="mb-15">
+                                    <v-select
+                                        v-model="filters.sortField"
+                                        :options="sortFieldOptions"
+                                        label="text"
+                                        :reduce="option => option.value"
+                                        placeholder="Sort By"
+                                    ></v-select>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4">
+                                <b-form-group label="Sort Order" class="mb-15">
+                                    <v-select
+                                        v-model="filters.sortOrder"
+                                        :options="sortOrderOptions"
+                                        label="text"
+                                        :reduce="option => option.value"
+                                        placeholder="Sort Order"
+                                    ></v-select>
+                                </b-form-group>
+                            </b-col>
+                            <b-col cols="12" md="6" lg="4" class="d-flex align-items-end">
+                                <b-form-group class="mb-15 w-100">
+                                    <b-button variant="primary" type="submit">
+                                        <i class="bi bi-check2-circle mr-5"></i>
+                                        Apply Filters
+                                    </b-button>
+                                </b-form-group>
+                            </b-col>
+                        </b-row>
+                    </b-col>
+                </b-row>
             </form>
-        </a-card>
-        <a-card>
-            <a-skeleton v-if="loading" active :paragraph="false" v-for="index in 15" :key="index"></a-skeleton>
-            <div class="ant-table-wrapper" v-if="!loading">
-                <a-table
-                    class="fit-table report-candidates-table"
-                    :columns="columns"
-                    :rowKey="record => record.id"
-                    :dataSource="dataSource"
-                    :pagination="false"
-                    :loading="loading">
-                    <template slot="first_name" slot-scope="text, record, index">
-                        {{record.first_name}} {{record.last_name}} <br>
-                        <strong>Gender</strong>: {{(record.gender === 1 ? 'Male' : 'Female' )}} <br>
-                        <strong>Email</strong>: {{record.email}}
+        </b-card>
+        <b-card>
+            <b-skeleton-table v-if="loading" :rows="15" :columns="columns.length"></b-skeleton-table>
+            <div v-if="!loading">
+                <b-table
+                    class="fit-table report-candidates-table report-modern-table"
+                    responsive
+                    hover
+                    show-empty
+                    empty-text="No data available"
+                    :fields="columns"
+                    :items="dataSource"
+                    :busy="loading"
+                >
+                    <template #cell(first_name)="data">
+                        <div class="job-title-cell">
+                            <div class="job-title-text">
+                                {{data.item.first_name}} {{data.item.last_name}}
+                            </div>
+                            <div class="job-meta-line">
+                                {{data.item.email}}
+                            </div>
+                            <b-badge class="user-light-badge mt-5">
+                                {{(data.item.gender === 1 ? 'Male' : 'Female' )}}
+                            </b-badge>
+                        </div>
                     </template>
-                    <template slot="created_at" slot-scope="text, record, index">
-                        {{(record.created_at ? covertDate(record.created_at, 'DD-MM-YYYY', 'YYYY-MM-DD') : '')}}
+                    <template #cell(created_at)="data">
+                        <span class="report-date-text">
+                            {{(data.item.created_at ? covertDate(data.item.created_at, 'DD-MM-YYYY', 'YYYY-MM-DD') : '')}}
+                        </span>
                     </template>
-                    <template slot="job_applications" slot-scope="text, record, index">
-                        {{(record.job_applications) ? record.job_applications.length : 0}}
+                    <template #cell(job_applications)="data">
+                        <span class="report-count-pill">
+                            {{(data.item.job_applications) ? data.item.job_applications.length : 0}}
+                        </span>
                     </template>
-                    <template slot="status" slot-scope="text, record, index">
-                        <span v-if="record.status"><a-tag color="blue">Yes</a-tag></span>
-                        <span v-if="!record.status"><a-tag color="red">No</a-tag></span>
+                    <template #cell(status)="data">
+                        <b-badge v-if="data.item.status" class="job-status-badge job-status-active">Active</b-badge>
+                        <b-badge v-if="!data.item.status" class="job-status-badge job-status-inactive">Inactive</b-badge>
                     </template>
-                    <template slot="interviews" slot-scope="text, record, index">
-                        {{(record.interviews) ? record.interviews.length : 0}}
+                    <template #cell(interviews)="data">
+                        <span class="report-count-pill">
+                            {{(data.item.interviews) ? data.item.interviews.length : 0}}
+                        </span>
                     </template>
-                    <template slot="documents" slot-scope="text, record, index">
-                        {{(record.documents) ? record.documents.length : 0}}
+                    <template #cell(documents)="data">
+                        <span class="report-count-pill">
+                            {{(data.item.documents) ? data.item.documents.length : 0}}
+                        </span>
                     </template>
-                </a-table>
+                </b-table>
             </div>
-        </a-card>
+        </b-card>
     </div>
 </template>
 
@@ -124,40 +156,28 @@
                 dataSource: [],
                 columns: [
                     {
-                        title: 'Candidate Name',
-                        dataIndex: 'first_name',
-                        width: 200,
-                        scopedSlots: { customRender: 'first_name' },
+                        key: 'first_name',
+                        label: 'Candidate Name',
                     },
                     {
-                        title: 'Registered At',
-                        dataIndex: 'created_at',
-                        width: 200,
-                        scopedSlots: { customRender: 'created_at' },
+                        key: 'created_at',
+                        label: 'Registered At',
                     },
                     {
-                        title: 'Is active?',
-                        dataIndex: 'status',
-                        width: 150,
-                        scopedSlots: { customRender: 'status' },
+                        key: 'status',
+                        label: 'Is active?',
                     },
                     {
-                        title: 'Number of job applications',
-                        dataIndex: 'job_applications',
-                        width: 150,
-                        scopedSlots: { customRender: 'job_applications' },
+                        key: 'job_applications',
+                        label: 'Number of job applications',
                     },
                     {
-                        title: 'Number of Interviews',
-                        dataIndex: 'interviews',
-                        width: 150,
-                        scopedSlots: { customRender: 'interviews' },
+                        key: 'interviews',
+                        label: 'Number of Interviews',
                     },
                     {
-                        title: 'Number of Documents',
-                        dataIndex: 'documents',
-                        width: 150,
-                        scopedSlots: { customRender: 'documents' },
+                        key: 'documents',
+                        label: 'Number of Documents',
                     },
                 ],
                 filters: {
@@ -172,7 +192,16 @@
                         loading: false,
                         dataSource: []
                     }
-                }
+                },
+                sortFieldOptions: [
+                    {value: 'first_name', text: 'Candidate FirstName'},
+                    {value: 'last_name', text: 'Candidate LastName'},
+                    {value: 'status', text: 'Is Active?'},
+                ],
+                sortOrderOptions: [
+                    {value: 'desc', text: 'Descending'},
+                    {value: 'asc', text: 'Ascending'},
+                ],
             }
         },
         mounted() {
@@ -182,12 +211,34 @@
         methods: {
             loadList() {
                 this.loading = true;
+                const filters = {
+                    ...this.filters,
+                    fromRegistered: ((this.filters.fromRegistered) ? dateToUtcDate(this.filters.fromRegistered, 'DD-MM-YYYY', 'YYYY-MM-DD') : null),
+                    toRegistered: ((this.filters.toRegistered) ? dateToUtcDate(this.filters.toRegistered, 'DD-MM-YYYY', 'YYYY-MM-DD') : null),
+                };
+
+                if (!filters.candidates.length) {
+                    delete filters.candidates;
+                }
+
+                if (!filters.fromRegistered) {
+                    delete filters.fromRegistered;
+                }
+
+                if (!filters.toRegistered) {
+                    delete filters.toRegistered;
+                }
+
+                if (!filters.sortField) {
+                    delete filters.sortField;
+                }
+
+                if (!filters.sortOrder) {
+                    delete filters.sortOrder;
+                }
+
                 const listQueryParams = {
-                    filters: {
-                        ...this.filters,
-                        fromRegistered: ((this.filters.fromRegistered) ? dateToUtcDate(this.filters.fromRegistered, 'DD-MM-YYYY', 'YYYY-MM-DD') : ''),
-                        toRegistered: ((this.filters.toRegistered) ? dateToUtcDate(this.filters.toRegistered, 'DD-MM-YYYY', 'YYYY-MM-DD') : ''),
-                    },
+                    filters: filters,
                 };
 
                 request({

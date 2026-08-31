@@ -1,34 +1,27 @@
 <template>
-    <div id="front-wrapper">
+    <header class="public-topbar">
         <div class="container">
-            <div>
-                <div class="nav">
-                    <input type="checkbox" id="nav-check">
-                    <div class="nav-header">
-                        <div class="nav-title">
-                            <router-link :to="{name: 'landing'}">
-                                {{textLogoPartOne}}{{textLogoPartTwo}}
-                            </router-link>
-                        </div>
-                    </div>
-                    <div class="nav-btn">
-                        <label for="nav-check">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                        </label>
-                    </div>
+            <div class="public-topbar-inner">
+                <router-link :to="{name: 'landing'}" class="public-brand-link">
+                    <span>{{ logoInitials }}</span>
+                    <strong>{{textLogoPartOne}}{{textLogoPartTwo}}</strong>
+                </router-link>
 
-                    <div class="nav-links">
-                        <router-link :to="{name: 'profile'}" v-if="auth">{{user.first_name}} {{user.last_name[0]}}.</router-link>
-                        <router-link :to="{name: 'login'}" v-if="!auth">Login</router-link>
-                        <router-link :to="{name: 'aboutUs'}">About us</router-link>
-                        <a href="javascript:;" @click="logout" v-if="auth">Logout</a>
-                    </div>
+                <div class="public-nav-links">
+                    <router-link :to="{name: 'landing'}">Jobs</router-link>
+                    <router-link :to="{name: 'aboutUs'}">About us</router-link>
+                    <router-link :to="{name: 'profile'}" v-if="auth" class="public-user-link">
+                        <i class="bi bi-person-circle mr-5"></i>
+                        {{userName}}
+                    </router-link>
+                    <router-link :to="{name: 'login'}" v-if="!auth" class="public-login-link">Login</router-link>
+                    <button type="button" class="public-logout-button" @click="logout" v-if="auth">
+                        Logout
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
+    </header>
 </template>
 <script>
     import {getAuthUser, hasAuthUser, refresh, removeStorage} from "../../util/utils";
@@ -62,6 +55,19 @@
             ...mapFields([
                 'settings'
             ]),
+            logoInitials() {
+                const firstLetter = this.textLogoPartOne ? this.textLogoPartOne[0] : 'A';
+                const secondLetter = this.textLogoPartTwo ? this.textLogoPartTwo[0] : 'T';
+
+                return firstLetter + secondLetter;
+            },
+            userName() {
+                const firstName = this.user.first_name || '';
+                const lastName = this.user.last_name || '';
+                const lastInitial = lastName ? `${lastName[0]}.` : '';
+
+                return `${firstName} ${lastInitial}`.trim();
+            },
         },
     }
 </script>

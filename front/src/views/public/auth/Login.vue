@@ -1,56 +1,77 @@
 <template>
-    <div class="public-box-container">
-        <div class="box pt-0 text-center">
-            <h1 class="mb-0 text-white">Welcome to <strong>Login</strong></h1>
-            <h4 class="text-white">Let's start your session.</h4>
-        </div>
+    <div class="auth-page">
+        <b-row class="auth-shell no-gutters">
+            <b-col cols="12" lg="4" class="auth-left-panel">
+                <div class="auth-brand">
+                    <span>ATS</span>
+                    <strong>Recruitment Manager</strong>
+                </div>
+                <h1>Welcome Back</h1>
+                <p>Login to manage jobs, candidates, interviews, and reports from one clean workspace.</p>
+                <div class="auth-feature-list">
+                    <span><i class="bi bi-check-circle mr-5"></i>Track applications</span>
+                    <span><i class="bi bi-check-circle mr-5"></i>Manage interviews</span>
+                    <span><i class="bi bi-check-circle mr-5"></i>Review hiring reports</span>
+                </div>
+            </b-col>
 
-        <div class="public-box back-white mt-40">
-            <h2>Enter Credentials</h2>
+            <b-col cols="12" lg="8" class="auth-form-panel">
+                <div class="auth-form-card">
+                    <div class="auth-form-header">
+                        <div class="auth-card-brand">
+                            <span>ATS</span>
+                            <strong>Recruitment Manager</strong>
+                        </div>
+                        <h2>Login</h2>
+                        <p>Enter your email and password to continue.</p>
+                    </div>
             <form @submit.prevent="submit" autocomplete="off">
                 <div>
-                    <a-form-item class="mb-10 required-input"
-                     :validate-status="(formErrors.has('email') ? 'error' : '')"
-                     :help="formErrors.first('email')">
-                        <a-input placeholder="Email" v-model="formFields.email">
-                            <a-icon  size="large" slot="prefix" type="user" style="color: rgba(0,0,0,.25)" />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item class="mb-10 required-input"
-                     :validate-status="(formErrors.has('password') ? 'error' : '')"
-                     :help="formErrors.first('password')">
-                        <a-input
-                        type="password"
-                        v-model="formFields.password"
-                         placeholder="Password">
-                            <a-icon slot="prefix" type="lock" style="color: rgba(0,0,0,.25)" />
-                        </a-input>
-                    </a-form-item>
-                    <a-form-item>
-                        <a-row>
-                            <a-col span="12">
-                                <a-checkbox v-model="formFields.remember_me">
-                                    Remember me
-                                </a-checkbox>
-                            </a-col>
-                            <a-col span="12" class="text-right">
-                                <div><router-link class="login-form-forgot" :to="{name: 'passwordForgot'}">Forgot password?</router-link></div>
-                            </a-col>
-                        </a-row>
-                        <a-row>
-                            <a-col span="24" class="mt-20 text-center">
-                                <a-button size="large" type="primary" block html-type="submit" class="login-form-button">
-                                    <span class="pl-10 pr-10">Log in</span>
-                                </a-button>
-                            </a-col>
-                            <a-col span="24" class="mt-20 text-right">
-                                <div><router-link class="login-form-forgot" :to="{name: 'register'}">Create an Account</router-link></div>
-                            </a-col>
-                        </a-row>
-                    </a-form-item>
+                    <b-form-group
+                        label="Email *"
+                        class="mb-15 required-input"
+                        :state="formErrors.has('email') ? false : null"
+                        :invalid-feedback="formErrors.first('email')"
+                    >
+                        <b-form-input
+                            placeholder="admin@example.com"
+                            v-model="formFields.email"
+                            :state="formErrors.has('email') ? false : null"
+                        ></b-form-input>
+                    </b-form-group>
+                    <b-form-group
+                        label="Password *"
+                        class="mb-15 required-input"
+                        :state="formErrors.has('password') ? false : null"
+                        :invalid-feedback="formErrors.first('password')"
+                    >
+                        <b-form-input
+                            type="password"
+                            v-model="formFields.password"
+                            placeholder="Enter password"
+                            :state="formErrors.has('password') ? false : null"
+                        ></b-form-input>
+                    </b-form-group>
+                    <b-form-group>
+                        <div class="auth-form-options">
+                            <b-form-checkbox v-model="formFields.remember_me">
+                                Remember me
+                            </b-form-checkbox>
+                            <router-link class="auth-link" :to="{name: 'passwordForgot'}">Forgot password?</router-link>
+                        </div>
+                        <b-button size="lg" variant="primary" block type="submit" class="auth-submit-button" :disabled="isSubmitted">
+                            {{ isSubmitted ? 'Logging in...' : 'Login' }}
+                        </b-button>
+                        <p class="auth-bottom-text">
+                            New here?
+                            <router-link class="auth-link" :to="{name: 'register'}">Create an account</router-link>
+                        </p>
+                    </b-form-group>
                 </div>
             </form>
-        </div>
+                </div>
+            </b-col>
+        </b-row>
     </div>
 </template>
 <script>

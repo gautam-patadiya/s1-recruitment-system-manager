@@ -1,112 +1,86 @@
 <template>
-    <a-layout-sider collapsible :trigger="null" width="230" v-model="sidebarCollapsed">
-        <div id="sidebar-logo">
-            <router-link :to="{name: 'landing'}" class="text-white hover-transparent">
-                <span>
+    <aside id="private-sidebar">
+        <div class="sidebar-brand-card">
+            <router-link :to="{name: 'landing'}" id="sidebar-logo" class="hover-transparent">
+                <span class="logo-mark">{{ logoInitials }}</span>
+                <span class="logo-text">
                     {{textLogoPartOne}}<abbr>{{textLogoPartTwo}}</abbr>
                 </span>
             </router-link>
+
+            <p>Recruitment control center</p>
         </div>
-        <a-menu
-            theme="dark"
-            mode="inline">
-            <a-menu-item key="home" class="mt-0">
-                <router-link :to="{name: 'home'}">
-                    <a-icon type="dashboard"/>
-                    <span class="nav-text">Dashboard</span>
+
+        <nav class="sidebar-nav">
+            <div class="sidebar-group" v-for="group in menuGroups" :key="group.title">
+                <p class="sidebar-title">{{ group.title }}</p>
+
+                <router-link
+                    v-for="item in group.items"
+                    :key="item.routeName"
+                    :to="{name: item.routeName}"
+                    class="sidebar-link"
+                >
+                    <span class="sidebar-icon">
+                        <b-icon :icon="item.icon"></b-icon>
+                    </span>
+                    <span>{{ item.label }}</span>
                 </router-link>
-            </a-menu-item>
-            <a-menu-item key="job">
-                <router-link :to="{name: 'job'}">
-                    <a-icon type="plus-square"/>
-                    <span class="nav-text">Jobs</span>
-                </router-link>
-            </a-menu-item>
-            <a-menu-item key="job_application">
-                <router-link :to="{name: 'jobApplication'}">
-                    <a-icon type="pic-right" />
-                    <span class="nav-text">Job Applications</span>
-                </router-link>
-            </a-menu-item>
-            <a-menu-item key="company">
-                <router-link :to="{name: 'company'}">
-                    <a-icon type="database" />
-                    <span class="nav-text">Companies</span>
-                </router-link>
-            </a-menu-item>
-            <a-menu-item key="user">
-                <router-link :to="{name: 'user'}">
-                    <a-icon type="user"/>
-                    <span class="nav-text">Users</span>
-                </router-link>
-            </a-menu-item>
-            <a-menu-item key="interview">
-                <router-link :to="{name: 'interview'}">
-                    <a-icon type="clock-circle"/>
-                    <span class="nav-text">Interviews</span>
-                </router-link>
-            </a-menu-item>
-            <a-sub-menu key="report">
-                <span slot="title">
-                    <a-icon type="appstore"/>
-                    <span>Reports</span>
-                </span>
-                <a-menu-item key="candidateOverview">
-                    <router-link :to="{name: 'report.candidateOverview'}">
-                        <span class="nav-text">Candidates Overview</span>
-                    </router-link>
-                </a-menu-item>
-                <a-menu-item key="jobOverview">
-                    <router-link :to="{name: 'report.jobOverview'}">
-                        <span class="nav-text">Jobs Overview</span>
-                    </router-link>
-                </a-menu-item>
-            </a-sub-menu>
-            <a-sub-menu key="master">
-                <span slot="title"><a-icon type="copy"/><span>Masters</span></span>
-                <a-menu-item key="experienceLevel">
-                    <router-link :to="{name: 'master.experienceLevel'}">
-                        <span class="nav-text">Experience Levels</span>
-                    </router-link>
-                </a-menu-item>
-                <a-menu-item key="qualification">
-                    <router-link :to="{name: 'master.qualification'}">
-                        <span class="nav-text">Qualifications</span>
-                    </router-link>
-                </a-menu-item>
-                <a-menu-item key="interviewStage">
-                    <router-link :to="{name: 'master.interviewStage'}">
-                        <span class="nav-text">Interview Stages</span>
-                    </router-link>
-                </a-menu-item>
-                <a-menu-item key="jobDepartment">
-                    <router-link :to="{name: 'master.jobDepartment'}">
-                        <span class="nav-text">Job Departments</span>
-                    </router-link>
-                </a-menu-item>
-                <a-menu-item key="documentType">
-                    <router-link :to="{name: 'master.documentType'}">
-                        <span class="nav-text">Document Type</span>
-                    </router-link>
-                </a-menu-item>
-                <a-menu-item key="setting">
-                    <router-link :to="{name: 'master.setting'}">
-                        <span class="nav-text">System Setting</span>
-                    </router-link>
-                </a-menu-item>
-            </a-sub-menu>
-        </a-menu>
-    </a-layout-sider>
+            </div>
+        </nav>
+
+        <div class="sidebar-summary-card">
+            <span>Today</span>
+            <strong>12</strong>
+            <p>Applications need review</p>
+        </div>
+    </aside>
 </template>
+
 <script>
     import {mapFields} from "vuex-map-fields";
 
     export default {
         data() {
             return {
-                collapsed: true,
                 textLogoPartOne: '',
                 textLogoPartTwo: '',
+                menuGroups: [
+                    {
+                        title: 'Workspace',
+                        items: [
+                            {routeName: 'home', label: 'Dashboard', icon: 'speedometer2'},
+                            {routeName: 'job', label: 'Jobs', icon: 'briefcase'},
+                            {routeName: 'jobApplication', label: 'Applications', icon: 'card-checklist'},
+                            {routeName: 'interview', label: 'Interviews', icon: 'calendar2-check'},
+                        ],
+                    },
+                    {
+                        title: 'People',
+                        items: [
+                            {routeName: 'user', label: 'Users', icon: 'people'},
+                            {routeName: 'company', label: 'Companies', icon: 'building'},
+                        ],
+                    },
+                    {
+                        title: 'Reports',
+                        items: [
+                            {routeName: 'report.candidateOverview', label: 'Candidates Overview', icon: 'bar-chart'},
+                            {routeName: 'report.jobOverview', label: 'Jobs Overview', icon: 'graph-up'},
+                        ],
+                    },
+                    {
+                        title: 'Masters',
+                        items: [
+                            {routeName: 'master.experienceLevel', label: 'Experience Levels', icon: 'layers'},
+                            {routeName: 'master.qualification', label: 'Qualifications', icon: 'award'},
+                            {routeName: 'master.interviewStage', label: 'Interview Stages', icon: 'diagram3'},
+                            {routeName: 'master.jobDepartment', label: 'Job Departments', icon: 'collection'},
+                            {routeName: 'master.documentType', label: 'Document Type', icon: 'file-earmark-text'},
+                            {routeName: 'master.setting', label: 'System Setting', icon: 'gear'},
+                        ],
+                    },
+                ],
             }
         },
         mounted() {
@@ -115,21 +89,14 @@
         },
         computed: {
             ...mapFields([
-                'sidebarCollapsed',
                 'settings'
             ]),
-            activeKey() {
-                switch (this.$router.currentRoute.name) {
-                    case 'master.experienceLevel':
-                    case 'master.qualification':
-                    case 'master.interviewStage':
-                    case 'master.jobDepartment':
-                        return 'master';
-                    default:
-                        return this.$router.currentRoute.name;
-                }
-            }
-        },
+            logoInitials() {
+                const firstLetter = this.textLogoPartOne ? this.textLogoPartOne[0] : 'S';
+                const secondLetter = this.textLogoPartTwo ? this.textLogoPartTwo[0] : '1';
 
+                return firstLetter + secondLetter;
+            },
+        },
     }
 </script>

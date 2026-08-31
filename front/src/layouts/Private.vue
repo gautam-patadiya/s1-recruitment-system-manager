@@ -1,17 +1,20 @@
 <template>
-    <a-layout id="private-wrapper">
-        <private-sidebar></private-sidebar>
-        <a-layout id="private-content-wrapper">
-            <div id="border-container" class="mt-5">
+    <div id="private-wrapper" :class="{ 'sidebar-is-collapsed': sidebarCollapsed }">
+        <private-sidebar v-if="!sidebarCollapsed"></private-sidebar>
+
+        <main id="private-content-wrapper">
+            <div id="border-container">
                 <private-header></private-header>
-                <a-layout-content id="private-content">
+                <section id="private-content">
                     <slot></slot>
-                </a-layout-content>
+                </section>
             </div>
-        </a-layout>
-    </a-layout>
+        </main>
+    </div>
 </template>
+
 <script>
+    import {mapFields} from "vuex-map-fields";
     import PrivateSidebar from "../components/layoutPartials/PrivateSidebar";
     import PrivateHeader from "../components/layoutPartials/PrivateHeader";
 
@@ -20,10 +23,10 @@
             PrivateSidebar,
             PrivateHeader,
         },
-        data() {
-            return {
-                collapsed: false,
-            };
-        }
+        computed: {
+            ...mapFields([
+                'sidebarCollapsed'
+            ]),
+        },
     }
 </script>
