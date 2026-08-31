@@ -294,3 +294,17 @@ If frontend install fails because of Node:
 ## License
 
 This project is open-source under the MIT license.
+
+## Screenshots
+
+### Admin Dashboard
+
+![Admin Dashboard](docs/screenshots/dashboard.png)
+
+### Login
+
+![Login Screen](docs/screenshots/auth.png)
+
+### Public Jobs Page
+
+![Public Jobs Page](docs/screenshots/public-jobs.png)
